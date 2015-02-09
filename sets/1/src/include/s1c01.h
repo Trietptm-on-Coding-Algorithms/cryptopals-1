@@ -1,9 +1,6 @@
 #ifndef S1C01_H
 #define S1C01_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "rot0x1a-common.h"
 
 /**
