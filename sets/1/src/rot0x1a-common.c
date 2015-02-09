@@ -54,8 +54,8 @@ char *base64Encode(unsigned char *data, int dataLength){
     int resultSize = dataLength * 2;
     result = calloc(resultSize + 1, sizeof(char));
     if(!result){
-        printf("Error: Could not allocate memory.\n");
-        exit(-1);
+        printf("Error: base64Encode Could not allocate memory.\n");
+        return result;
     }    
 
     // Base64 encode the data, 24 bytes at a time.
@@ -87,6 +87,30 @@ char *base64Encode(unsigned char *data, int dataLength){
         strncpy(result + numWrote - 2, "==", sizeof(char) * 3);
     } else if (remainingBytes == 2) {
         strncpy(result + numWrote - 1, "=", sizeof(char) * 2);
+    }
+
+    return result;
+}
+
+
+char *xorDataBlocks(unsigned char *dataBlockOne, unsigned char *dataBlockTwo, int dataBlockLength) {
+    char *result = NULL;
+
+    // Check for invalid arguments.
+    if(!dataBlockOne || !dataBlockTwo){        
+        return result;
+    }
+
+    result = calloc(dataBlockLength, sizeof(char));
+    if(!result){
+        printf("Error: xorDataBlocks Could not allocate memory.\n");
+        return result;
+    }    
+
+    for(int i=0; i<dataBlockLength; i++){
+        unsigned char smallBlockOne = dataBlockOne[i];
+        unsigned char smallBlockTwo = dataBlockTwo[i];
+        sprintf(result + (2 * i), "%x", smallBlockOne ^ smallBlockTwo);
     }
 
     return result;

@@ -29,4 +29,17 @@ unsigned char *loadHexStringToMemory(char *hexString);
   */
 char *base64Encode(unsigned char *data, int dataLength);
 
+
+/**
+  * Given a pointer to two blocks of memory, return a string representation
+  * of the two values XOR'ed together.
+  *
+  * @param dataBlockOne The location of the first block of data to be XOR'ed.
+  * @param dataBlockTwo The location of the second block of data to be XOR'ed.
+  * @param dataBlockLength The number of bytes to XOR together.
+  *
+  * @return The string representation of the XOR results.
+  */
+char *xorDataBlocks(unsigned char *dataBlockOne, unsigned char *dataBlockTwo, int dataBlockLength);
+
 #endif
