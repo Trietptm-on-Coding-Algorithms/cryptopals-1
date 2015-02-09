@@ -12,7 +12,6 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-    printf("%s\n", hexToBase64(argv[1]));
 }
 
 
