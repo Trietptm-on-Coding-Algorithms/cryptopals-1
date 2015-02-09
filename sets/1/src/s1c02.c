@@ -19,7 +19,9 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-    char *result = xorDataBlocks(dataBlockOne, dataBlockTwo, strlen(argv[1]) / 2);
+    int numBytes = (strlen(argv[1]) % 2) ? (strlen(argv[1]) + 1) / 2 : strlen(argv[1]) / 2;
+    printf("numBytes: %d\n", numBytes);
+    char *result = xorDataBlocks(dataBlockOne, dataBlockTwo, numBytes);
     printf("Result: %s\n", result);
 
     free(dataBlockOne);
