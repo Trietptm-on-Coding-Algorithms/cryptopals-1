@@ -110,7 +110,7 @@ char *xorDataBlocks(unsigned char *dataBlockOne, unsigned char *dataBlockTwo, in
     for(int i=0; i<dataBlockLength; i++){
         unsigned char smallBlockOne = dataBlockOne[i];
         unsigned char smallBlockTwo = dataBlockTwo[i];
-        sprintf(result + (2 * i), "%x", smallBlockOne ^ smallBlockTwo);
+        sprintf(result + (2 * i), "%02x", smallBlockOne ^ smallBlockTwo);
     }
 
     return result;
