@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
     }
 
     // Get the number of characters in the string.
-    int numCharacters = strlen(argv[1]) / 2;
+    int numCharacters = strlen(argv[1]);
 
     // Load the hex string into memory.
     unsigned char *cipheredString = loadHexStringToMemory(argv[1]);
