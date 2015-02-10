@@ -36,106 +36,70 @@ int main(int argc, char **argv) {
         printf("Could not map file to memory. Quitting.\n");
         return -1;
     }
-    char *fileMappingPtr = fileMapping;
 
     // Keep track of our most confident response, gauged by the highest number of ASCII matches.
-    int highestConfidenceCount = 0;
-    char highestConfidenceKey = ' ';
-    unsigned char *highestConfidenceMessage = NULL;
-    int currentLineNumber = 0;
+    xorDecryptedMessage *bestDecryptedMessage = malloc(sizeof(xorDecryptedMessage));
+    bestDecryptedMessage->numberOfMatches = 0;
+    bestDecryptedMessage->key = NULL;
+    bestDecryptedMessage->message = NULL;
+
+    // We also want to report the line number that contained the encrypted string.
     int winningLineNumber = 0;
+    int currentLineNumber = 0;
 
     // Split the file using newlines as delimiters and test each string.s
-    fileMappingPtr = strtok(fileMappingPtr, "\n");
-    while (fileMappingPtr){
+    char *currentEncryptedString = strtok(fileMapping, "\n");
+    while (currentEncryptedString){
 
-        // Get the number of characters in the string.
-        int numCharacters = strlen(fileMappingPtr);
-
-        // Load the hex string into memory.
-        unsigned char *cipheredString = loadHexStringToMemory(fileMappingPtr);
-
-        // Keep track of our highest number of ASCII matches.
-        int highestMatchCount = 0;
-        char highestMatchKey = ' ';
-        unsigned char *highestMatchMessage = NULL;
-
-        // Check all common ASCII characters as the key.
-        for(char xorValue=' '; xorValue<='}'; xorValue++){
-
-            // Create a string the same length as the ciphertext containing only the current ASCII value.
-            unsigned char *keyString = malloc(numCharacters);
-            memset(keyString, xorValue, numCharacters);
-
-            // XOR the cipher string and our key string together and free the keyString.
-            char *xorResult = xorDataBlocks(cipheredString, keyString, numCharacters);
-            free(keyString);
-
-            // Load the XOR'ed data into memory so we can treat it like a string.
-            unsigned char *xorResultInMemory = loadHexStringToMemory(xorResult);
-            
-            // TODO: Why can't I free you!
-            free(xorResult);
-
-            // Count how many spaces and English alphabet ASCII characters are in the decoded string.
-            int thisMatchCount = 0;
-            for(int j=0; j<numCharacters; j++){
-                if(('A' <= xorResultInMemory[j] && xorResultInMemory[j] <= 'z') || xorResultInMemory[j] == ' '){
-                    thisMatchCount++;
-                }
-            }
-
-            // If this decrypted string contains more matches than the previous best, save it and the key.
-            if(thisMatchCount > highestMatchCount){
-                highestMatchCount = thisMatchCount;
-                highestMatchKey = xorValue;
-
-                // If we had a previous best match, we can free it now.
-                if(highestMatchMessage != NULL){
-                    free(highestMatchMessage);
-                    highestMatchMessage = NULL;
-                }
-                highestMatchMessage = xorResultInMemory;
-            } else {
-                free(xorResultInMemory);
-            }
-        }
+        xorDecryptedMessage *currentDecryptedMessage = decryptHexStringUsingXOR(currentEncryptedString, 1);
 
         // If this decrypted string contains more matches than the previous best, save it and the key.
-        if(highestConfidenceCount < highestMatchCount){
-            highestConfidenceCount = highestMatchCount;
-            highestConfidenceKey = highestMatchKey;
-            winningLineNumber = currentLineNumber;
+        if(bestDecryptedMessage->numberOfMatches < currentDecryptedMessage->numberOfMatches){
 
-            // If we had a previous best match, we can free it now.
-            if(highestConfidenceMessage != NULL){
-                free(highestConfidenceMessage);
-                highestConfidenceMessage = NULL;
+            winningLineNumber = currentLineNumber;
+            bestDecryptedMessage->numberOfMatches = currentDecryptedMessage->numberOfMatches;
+
+            // If we had a previous best match for the key, we can free it now.
+            if(bestDecryptedMessage->key != NULL){
+                free(bestDecryptedMessage->key);
+                bestDecryptedMessage->key = NULL;
             }
-            highestConfidenceMessage = highestMatchMessage;
+            bestDecryptedMessage->key = currentDecryptedMessage->key;
+
+            // If we had a previous best match for the message, we can free it now.
+            if(bestDecryptedMessage->message != NULL){
+                free(bestDecryptedMessage->message);
+                bestDecryptedMessage->message = NULL;
+            }
+            bestDecryptedMessage->message = currentDecryptedMessage->message;
+
         } else {
-            free(highestMatchMessage);
+            free(currentDecryptedMessage->key);
+            free(currentDecryptedMessage->message);
+            free(currentDecryptedMessage);
         }
 
-        // Clean up this round and start the next round.
-        free(cipheredString);
-        fileMappingPtr = strtok(NULL, "\n");
+        // Prepare for the next round.
+        currentEncryptedString = strtok(NULL, "\n");
         currentLineNumber++;
     }
 
     // End the string at any newlines it may contain.
-    unsigned char *highestConfidenceMessagePtr = highestConfidenceMessage;
-    while(*highestConfidenceMessagePtr != '\0'){
-        if(*highestConfidenceMessagePtr == '\n'){
-            *highestConfidenceMessagePtr = '\0';
+    char *decryptedMessagePtr = bestDecryptedMessage->message;
+    while(*decryptedMessagePtr != '\0'){
+        if(*decryptedMessagePtr == '\n'){
+            *decryptedMessagePtr = '\0';
         } else {
-            highestConfidenceMessagePtr++;
+            decryptedMessagePtr++;
         }
     }
 
     // Display the result.
-    printf("Line Number: [%d], Key: [%c], Message: [%s]\n", winningLineNumber, highestConfidenceKey, highestConfidenceMessage);
+    printf("Line Number: %d\nKey: %s\nMatches: %d\nMessage: %s\n", winningLineNumber, bestDecryptedMessage->key, bestDecryptedMessage->numberOfMatches, bestDecryptedMessage->message);
 
-    free(highestConfidenceMessage);
+    // Clean up after ourselves and exit.
+    free(bestDecryptedMessage->key);
+    free(bestDecryptedMessage->message);
+    free(bestDecryptedMessage);
     return 0;
 }
