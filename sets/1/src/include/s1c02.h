@@ -3,7 +3,4 @@
 
 #include "rot0x1a-common.h"
 
-
-
-
 #endif
