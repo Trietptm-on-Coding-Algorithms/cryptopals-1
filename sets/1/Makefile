@@ -1,5 +1,5 @@
 CC = gcc
-CC_FLAGS = -Wall -Werror
+CC_FLAGS = -Wall -Werror -g -std=c99
 CC_CMD = ${CC} ${CC_FLAGS}
 
 DIRS = lib dist
