@@ -4,7 +4,7 @@
   *
   * Coded by rot0x1a, 09 Feb 2015
   */
-#import "include/s1c03.h"
+#include "include/s1c03.h"
 
 int main(int argc, char **argv) {
 
@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
         unsigned char *xorResultInMemory = loadHexStringToMemory(xorResult);
         
         // TODO: Why can't I free you!
-        // free(xorResult);
+        free(xorResult);
 
         // Count how many spaces and English alphabet ASCII characters are in the decoded string.
         int thisMatchCount = 0;
