@@ -76,10 +76,10 @@ int main(int argc, char **argv) {
         } else {
             free(currentDecryptedMessage->key);
             free(currentDecryptedMessage->message);
-            free(currentDecryptedMessage);
         }
 
-        // Prepare for the next round.
+        // Clean up this round and prepare for the next.
+        free(currentDecryptedMessage);
         currentEncryptedString = strtok(NULL, "\n");
         currentLineNumber++;
     }
