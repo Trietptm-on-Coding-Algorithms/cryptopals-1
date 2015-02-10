@@ -1,57 +1,22 @@
-# cryptopals
+# Matasano Crypto Challenges
 
-Matasano Crypto Challenges can be found at http://www.cryptopals.com
+I decided to try my hand at completing Matasano's Crypto Challenges in C. For more information about why I started, what the challenges are, or how you can try them for yourself, you can check my blog post [here](http://www.spdcx.net/2015/02/0x003-matasano-crypto-challenges-c.html). 
 
-
-Set 1: Basics
-------------------------------------------
-Started:    08 Feb 2015
-
-Completed:  N/A
-
-Set 2: Block crypto
-------------------------------------------
-Started:    N/A
-
-Completed:  N/A
-
-Set 3: Block & stream crypto
-------------------------------------------
-Started:    N/A
-
-Completed:  N/A
-
-Set 4: Stream crypto and randomness
-------------------------------------------
-Started:    N/A
-
-Completed:  N/A
-
-Set 5: Diffie-Hellman and friends
-------------------------------------------
-Started:    N/A
-
-Completed:  N/A
-
-Set 6: RSA and DSA
-------------------------------------------
-Started:    N/A
-
-Completed:  N/A
-
-Set 7: Hashes
-------------------------------------------
-Started:    N/A
-
-Completed:  N/A
+This readme will keep you posted on my progress.
 
 
+##Set 1: Basics
 
-
-
-
-
-
+| Challenge                        | Date Completed |
+| :------------------------------- | -------------: |
+| 1: Convert hex to base64         |    08 Feb 2015 |
+| 2: Fixed XOR                     |    09 Feb 2015 |
+| 3: Single-byte XOR cipher        |    09 Feb 2015 |
+| 4: Detect single-character XOR   |    09 Feb 2015 |
+| 5: Implement repeating-key XOR   |    IN PROGRESS |
+| 6: Break repeating-key XOR       |       			|
+| 7: AES in ECB mode               |       			|
+| 8: Detect AES in ECB mode        |      			||
 
 
 
