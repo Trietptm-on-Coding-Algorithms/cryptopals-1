@@ -24,7 +24,7 @@ unsigned char *loadHexStringToMemory(char *hexString){
     hexStringLength = strlen(validHexString);
 
     // Obtain memory for storing the result.
-    result = calloc(hexStringLength, sizeof(char));  
+    result = calloc(hexStringLength + 1, sizeof(char));  
     if(!result){
         printf("Error: loadHexStringToMemory could not allocate memory.\n");
         return result;
@@ -101,13 +101,13 @@ char *xorDataBlocks(unsigned char *dataBlockOne, unsigned char *dataBlockTwo, in
         return result;
     }
 
-    result = calloc(dataBlockLength, sizeof(char));
+    result = calloc(dataBlockLength + 1, sizeof(char));
     if(!result){
         printf("Error: xorDataBlocks Could not allocate memory.\n");
         return result;
     }    
 
-    for(int i=0; i<dataBlockLength; i++){
+    for(int i=0; i<dataBlockLength/2; i++){
         unsigned char smallBlockOne = dataBlockOne[i];
         unsigned char smallBlockTwo = dataBlockTwo[i];
         sprintf(result + (2 * i), "%02x", smallBlockOne ^ smallBlockTwo);
