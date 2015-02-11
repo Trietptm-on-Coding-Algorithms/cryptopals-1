@@ -60,7 +60,7 @@ char *xorDataBlock(char *dataBlock, char *xorKey, int dataBlockLength);
   * Decrypt a hex string representing an XOR'ed ASCII string by finding the key of a 
   * specified length that results in the highest number of ASCII characters when XOR'ed again.
   *
-  * NOTE: Currently only works with keyLength of 1
+  * NOTE: keyLength of values over 5 may take a long time.
   *
   * @param cipherText The hex string representing XOR'ed bytes of ASCII text.
   * @param keyLength The length of the key to use when XOR'ing the ciphertext.
@@ -68,5 +68,22 @@ char *xorDataBlock(char *dataBlock, char *xorKey, int dataBlockLength);
   * @return The struct containing the number of ASCII matches, the key, and the message found.
   */
 xorDecryptedMessage *decryptHexStringUsingXOR(char *cipherText, int keyLength);
+
+
+/**
+  * Brute force decrypt the ciphertext by trying to XOR all possible combinations of common US ASCII character strings of a 
+  * specified length and returning the match which contains the most US ASCII characters.
+  *
+  * Note: Thanks to roofis0 for helping me enumerate all possible key values of length n.
+  *
+  * @param result A preallocated xorDecryptedMessage struct which will be populated with the top match of the decryption attempt.
+  * @param cipherText The XOR'ed ciphertext we will attempt to decrypt.
+  * @param messageLength The length of the message when decrypted.
+  * @param keyBuffer The allocated memory used to recursively iterate through all possible keys.
+  * @param index The index in the keyBuffer this recursive call is looking at.
+  * @param keyLength The length of the key to XOR the ciphertext with.
+  */
+void checkAllKeyCombinations(xorDecryptedMessage* result, char *cipherText, int messageLength, char *keyBuffer, int index, int keyLength);
+
 
 #endif
