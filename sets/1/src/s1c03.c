@@ -18,6 +18,7 @@ int main(int argc, char **argv) {
 
     printf("Key: %s\nMatches: %d\nMessage: %s\n", result->key, result->numberOfMatches, result->message);
 
+    free(result->key);
     free(result->message);
     free(result);
     return 0;
