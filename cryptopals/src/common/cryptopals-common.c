@@ -16,7 +16,7 @@ char *loadHexStringToMemory(char *hexString){
         return result;
     }
 
-    // Verify the hex string only contains hex characters.
+    // Verify the hex string contains only hex characters.
     for(int i=0; i<hexStringLength; i++){
         int isNumber = (hexString[i] >= '0') && ('9' >= hexString[i]);
         int isLowerCase = (hexString[i] >= 'a') && ('f' >= hexString[i]);
@@ -106,7 +106,13 @@ char *xorDataBlock(char *dataBlock, char *xorKey, int dataBlockLength) {
         return result;
     }
 
-    int xorKeyLength = strlen((char *)xorKey);
+    int xorKeyLength = strlen(xorKey);
+    if(xorKeyLength < 1){
+        printf("Error: xorDataBlocks returning NULL due to receiving empty xorKey.\n");
+        return result;
+    }
+
+    // The data block 
     dataBlockLength = (dataBlockLength % 2) ? dataBlockLength + 1 : dataBlockLength;
     result = calloc(dataBlockLength + 1, sizeof(char));
     if(!result){
@@ -115,9 +121,12 @@ char *xorDataBlock(char *dataBlock, char *xorKey, int dataBlockLength) {
     }    
 
     for(int i=0; i<dataBlockLength/2; i++){
-        char smallBlockOne = dataBlock[i];
-        char smallBlockTwo = xorKey[i % xorKeyLength];
-        sprintf(result + (2 * i), "%02x", smallBlockOne ^ smallBlockTwo);
+        // Obtain the next bytes to XOR
+        char dataBlockByte = dataBlock[i];
+        char xorKeyByte = xorKey[i % xorKeyLength];
+    
+        // Store the XOR result as two hex characters representing the byte.
+        sprintf(result + (2 * i), "%02x", dataBlockByte ^ xorKeyByte);
     }
     return result;
 }
@@ -137,7 +146,7 @@ xorDecryptedMessage *decryptHexStringUsingXOR(char *cipherText, int keyLength){
 
     // Get the number of characters in the hex string and the decoded message.
     int numberOfHexCharacters = strlen(cipherText);
-    int messageLength = numberOfHexCharacters / 2;
+    int messageLength = (numberOfHexCharacters / 2);
 
     // Allocate memory for the result struct, the key, and the decoded message.
     result = calloc(sizeof(xorDecryptedMessage), sizeof(char));
@@ -202,7 +211,7 @@ void checkAllKeyCombinations(xorDecryptedMessage* result, char *cipherText, int 
         keyBuffer[keyLength] = '\0';
 
         // XOR the cipher string and our key string together and free the keyString.
-        char *xorResult = xorDataBlock(cipherText, keyBuffer, (messageLength * 2));
+        char *xorResult = xorDataBlock(cipherText, keyBuffer, ((messageLength * 2) + 1));
         if(!xorResult){
             printf("Error: checkAllKeyCombinations Could not XOR datablocks.\n");
         }
