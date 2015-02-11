@@ -12,15 +12,15 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-    unsigned char *dataBlockOne = loadHexStringToMemory(argv[1]);
-    unsigned char *dataBlockTwo = loadHexStringToMemory(argv[2]);
+    char *dataBlockOne = loadHexStringToMemory(argv[1]);
+    char *dataBlockTwo = loadHexStringToMemory(argv[2]);
     if(!dataBlockOne || !dataBlockTwo){
         printf("Error: Unable to load data blocks into memory.\n");
         return -1;
     }
 
     int numBytes = (strlen(argv[1]) % 2) ? (strlen(argv[1]) + 1) : strlen(argv[1]);
-    char *result = xorDataBlocks(dataBlockOne, dataBlockTwo, numBytes);
+    char *result = xorDataBlock(dataBlockOne, dataBlockTwo, numBytes);
 
     printf("Result: %s\n", result);
 
