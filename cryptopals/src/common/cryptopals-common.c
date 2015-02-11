@@ -4,43 +4,43 @@ char *loadHexStringToMemory(char *hexString){
     char *result = NULL;
 
     // Check for invalid arguments.
-    if(!hexString || !strlen(hexString)){
+    if(!hexString || strlen(hexString) < 1){
         printf("Error: loadHexStringToMemory returning NULL due to bad arguments.\n");
         return result;
     }
 
-    // If the hex string is of odd length, prepend a zero.
+    // Verify that the hex string is an even number of hex characters.
     int hexStringLength = strlen(hexString);
     if(hexStringLength % 2) {
         printf("Error: loadHexStringToMemory passed hex string of odd length.\n");
         return result;
     }
 
-    char *validHexString = calloc(hexStringLength, sizeof(char));
-    if(!validHexString){
-        printf("Error: loadHexStringToMemory could not allocate memory.\n");
-        return result;
+    // Verify the hex string only contains hex characters.
+    for(int i=0; i<hexStringLength; i++){
+        int isNumber = (hexString[i] >= '0') && ('9' >= hexString[i]);
+        int isLowerCase = (hexString[i] >= 'a') && ('f' >= hexString[i]);
+        int isUpperCase = (hexString[i] >= 'A') && ('F' >= hexString[i]);
+        if (!isNumber && !isLowerCase && !isUpperCase) {
+            printf("Error: loadHexStringToMemory found non-hexadecimal character [%c].\n", hexString[i]);
+            return result;
+        }
     }
 
-    strncpy(validHexString, hexString, hexStringLength);
-    char *validHexStringPtr = validHexString;
-    hexStringLength = strlen(validHexString);
-
     // Obtain memory for storing the result.
-    result = calloc(hexStringLength + 1, sizeof(char));  
+    result = calloc(hexStringLength + 1, sizeof(char));
     if(!result){
-        printf("Error: loadHexStringToMemory could not allocate memory.\n");
+        printf("Error: loadHexStringToMemory could not allocate memory for the result.\n");
         return result;
     }    
 
     // Copy the hex string characters into memory as raw data.
     for(int i = 0; i < hexStringLength/2; i++) {
-        sscanf(validHexStringPtr, "%2hhx", &result[i]);
-        validHexStringPtr += 2;
+        sscanf(hexString, "%2hhx", &result[i]);
+        hexString += 2;
     }
 
     // Clean up the mess we made and return.
-    free(validHexString);
     return result;
 }
 
@@ -107,6 +107,7 @@ char *xorDataBlock(char *dataBlock, char *xorKey, int dataBlockLength) {
     }
 
     int xorKeyLength = strlen((char *)xorKey);
+    dataBlockLength = (dataBlockLength % 2) ? dataBlockLength + 1 : dataBlockLength;
     result = calloc(dataBlockLength + 1, sizeof(char));
     if(!result){
         printf("Error: xorDataBlocks Could not allocate memory.\n");
