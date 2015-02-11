@@ -8,4 +8,15 @@
 
 int main(int argc, char **argv) {
 
+	char *string = "Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal";
+	char *xorKey = "ICE";
+
+	char *result = xorDataBlock(string, xorKey, strlen(string) * 2);
+	if(!result){
+		printf("Error: Failed to XOR the data =(\n");
+		return -1;
+	}
+
+	printf("%s\n", result);
+    free(result);
 }
