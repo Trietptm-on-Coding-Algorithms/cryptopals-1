@@ -22,10 +22,14 @@ typedef struct {
 } xorDecryptedMessage;
 
 /**
-  * Provided a string of hex characters, allocate a chunk of memory and load
-  * the hex characters into the chunk as raw data.
+  * Provided a string of hex characters, allocate a chunk of memory and load the hex characters into the chunk as raw data.
+  * 
+  * Hex String Requirements:
+  *   1) The hex string must be of even length in order to align the bytes in memory correctly.
+  *   2) The string must be null terminated.
+  *   2) The string greater than one character.
   *
-  * @param hexString The hexadecimal characters load into memory.
+  * @param hexString The string of hexadecimal characters to load into memory.
   *
   * @return The memory address we loaded the hex data into.
   */
