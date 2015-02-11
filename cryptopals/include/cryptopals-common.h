@@ -37,8 +37,7 @@ char *loadHexStringToMemory(char *hexString);
 
 
 /**
-  * Given a pointer to memory, encode the specified amount of data as base64 
-  * and return the result as a string.
+  * Returns the specified number of bytes at the provided location as a base64 string.
   *
   * @param data The location of the data to be encoded.
   * @param dataLength The number of bytes to encode.
@@ -49,7 +48,7 @@ char *base64Encode(char *data, int dataLength);
 
 
 /**
-  * XOR a datablock for a specified length using a specified key, repeating the key if necessary.
+  * Returns the XOR result of the dataBlock and repeating key for the specified number of bytes.
   *
   * @param dataBlock The block of data to XOR using the key.
   * @param xorKey The key to use when XOR'ing the dataBlock.
