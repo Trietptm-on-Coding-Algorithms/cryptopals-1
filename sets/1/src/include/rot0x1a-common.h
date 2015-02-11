@@ -29,7 +29,7 @@ typedef struct {
   *
   * @return The memory address we loaded the hex data into.
   */
-unsigned char *loadHexStringToMemory(char *hexString);
+char *loadHexStringToMemory(char *hexString);
 
 
 /**
@@ -41,20 +41,19 @@ unsigned char *loadHexStringToMemory(char *hexString);
   *
   * @return The base64 string representation of the data.
   */
-char *base64Encode(unsigned char *data, int dataLength);
+char *base64Encode(char *data, int dataLength);
 
 
 /**
-  * Given a pointer to two blocks of memory, return a string representation
-  * of the two values XOR'ed together.
+  * XOR a datablock for a specified length using a specified key, repeating the key if necessary.
   *
-  * @param dataBlockOne The location of the first block of data to be XOR'ed.
-  * @param dataBlockTwo The location of the second block of data to be XOR'ed.
-  * @param dataBlockLength The number of bytes to XOR together.
+  * @param dataBlock The block of data to XOR using the key.
+  * @param xorKey The key to use when XOR'ing the dataBlock.
+  * @param dataBlockLength The number of bytes to XOR.
   *
-  * @return The string representation of the XOR results.
+  * @return The string resulting from the XOR operation.
   */
-char *xorDataBlocks(unsigned char *dataBlockOne, unsigned char *dataBlockTwo, int dataBlockLength);
+char *xorDataBlock(char *dataBlock, char *xorKey, int dataBlockLength);
 
 
 /**
@@ -69,17 +68,5 @@ char *xorDataBlocks(unsigned char *dataBlockOne, unsigned char *dataBlockTwo, in
   * @return The struct containing the number of ASCII matches, the key, and the message found.
   */
 xorDecryptedMessage *decryptHexStringUsingXOR(char *cipherText, int keyLength);
-
-
-/**
-  * XOR a datablock for a specified length using a specified key, repeating the key if necessary.
-  *
-  * @param dataBlock The block of data to XOR using the key.
-  * @param dataBlockLength The number of bytes to XOR.
-  * @param xorKey The key to use when XOR'ing the dataBlock.
-  *
-  * @return The string of hex bytes resulting from the XOR operation.
-  */
-char *xorDataBlockWithRepeatingKey(unsigned char *dataBlock, int dataBlockLength, char *xorKey);
 
 #endif

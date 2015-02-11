@@ -1,10 +1,11 @@
 #include "include/rot0x1a-common.h"
 
-unsigned char *loadHexStringToMemory(char *hexString){
-    unsigned char *result = NULL;
+char *loadHexStringToMemory(char *hexString){
+    char *result = NULL;
 
     // Check for invalid arguments.
-    if(!hexString || !strlen(hexString)){        
+    if(!hexString || !strlen(hexString)){
+        printf("Error: loadHexStringToMemory returning NULL due to bad arguments.\n");
         return result;
     }
 
@@ -16,7 +17,7 @@ unsigned char *loadHexStringToMemory(char *hexString){
         printf("Error: loadHexStringToMemory could not allocate memory.\n");
         return result;
     } else if(isOddLength) {
-        printf("WARNING: Odd number of characters in hex string. Padding front with a zero.\n");
+        printf("Warning: Odd number of characters in hex string. Padding front with a zero.\n");
         strncpy(validHexString, "0", sizeof(char));
     }
     strncpy(validHexString + isOddLength, hexString, hexStringLength);
@@ -42,11 +43,12 @@ unsigned char *loadHexStringToMemory(char *hexString){
 }
 
 
-char *base64Encode(unsigned char *data, int dataLength){
+char *base64Encode(char *data, int dataLength){
     char *result = NULL;
 
     // Check for invalid arguments.
-    if(!data || dataLength < 1){        
+    if(!data || dataLength < 1){
+        printf("Error: base64Encode returning NULL due to bad arguments.\n");
         return result;
     }
 
@@ -93,14 +95,16 @@ char *base64Encode(unsigned char *data, int dataLength){
 }
 
 
-char *xorDataBlocks(unsigned char *dataBlockOne, unsigned char *dataBlockTwo, int dataBlockLength) {
+char *xorDataBlock(char *dataBlock, char *xorKey, int dataBlockLength) {
     char *result = NULL;
 
     // Check for invalid arguments.
-    if(!dataBlockOne || !dataBlockTwo){        
+    if(!dataBlock || !xorKey){
+        printf("Error: xorDataBlocks returning NULL due to bad arguments.\n");
         return result;
     }
 
+    int xorKeyLength = strlen((char *)xorKey);
     result = calloc(dataBlockLength + 1, sizeof(char));
     if(!result){
         printf("Error: xorDataBlocks Could not allocate memory.\n");
@@ -108,11 +112,10 @@ char *xorDataBlocks(unsigned char *dataBlockOne, unsigned char *dataBlockTwo, in
     }    
 
     for(int i=0; i<dataBlockLength/2; i++){
-        unsigned char smallBlockOne = dataBlockOne[i];
-        unsigned char smallBlockTwo = dataBlockTwo[i];
+        char smallBlockOne = dataBlock[i];
+        char smallBlockTwo = xorKey[i % xorKeyLength];
         sprintf(result + (2 * i), "%02x", smallBlockOne ^ smallBlockTwo);
     }
-
     return result;
 }
 
@@ -121,8 +124,8 @@ xorDecryptedMessage *decryptHexStringUsingXOR(char *cipherText, int keyLength){
     xorDecryptedMessage *result = NULL;
 
     // Check for invalid arguments.
-    if(!cipherText || strlen(cipherText) < 1 || keyLength < 1){        
-        printf("Error: decryptHexStringUsingXOR received empty ciphertext or bad key length.\n");
+    if(!cipherText || strlen(cipherText) < 1 || keyLength < 1){
+        printf("Error: decryptHexStringUsingXOR returning NULL due to bad arguments.\n");
         return result;
     } else if (strlen(cipherText) % 2){
         printf("Error: decryptHexStringUsingXOR received odd ciphertext string. Must be even number of hex characters.\n");
@@ -142,21 +145,21 @@ xorDecryptedMessage *decryptHexStringUsingXOR(char *cipherText, int keyLength){
     result->message = calloc(sizeof(char) * (messageLength + 1), sizeof(char));
 
     // Load the hex string into memory so we can work with it as raw data.
-    unsigned char *cipheredString = loadHexStringToMemory(cipherText);
+    char *cipheredString = loadHexStringToMemory(cipherText);
 
     // Check all common ASCII characters as the key.
     for(char xorValue=' '; xorValue<='}'; xorValue++){
 
         // Create a string the same length as the ciphertext containing only the current ASCII value.
-        unsigned char *keyString = malloc(numberOfHexCharacters);
+        char *keyString = malloc(numberOfHexCharacters);
         memset(keyString, xorValue, numberOfHexCharacters);
 
         // XOR the cipher string and our key string together and free the keyString.
-        char *xorResult = xorDataBlocks(cipheredString, keyString, numberOfHexCharacters);
+        char *xorResult = xorDataBlock(cipheredString, keyString, numberOfHexCharacters);
         free(keyString);
 
         // Load the XOR'ed data into memory so we can treat it like a string.
-        unsigned char *xorResultInMemory = loadHexStringToMemory(xorResult);        
+        char *xorResultInMemory = loadHexStringToMemory(xorResult);        
         free(xorResult);
 
         // Count how many spaces and English alphabet ASCII characters are in the decoded string.
@@ -179,12 +182,5 @@ xorDecryptedMessage *decryptHexStringUsingXOR(char *cipherText, int keyLength){
 
     // Clean up and return.
     free(cipheredString);
-    return result;
-}
-
-
-char *xorDataBlockWithRepeatingKey(unsigned char *dataBlockOne, int dataBlockLength, char *xorKey) {
-    char *result = NULL;
-
     return result;
 }
