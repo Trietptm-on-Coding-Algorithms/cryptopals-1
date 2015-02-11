@@ -31,7 +31,7 @@ char *hexToBase64(char *hexString){
     hexStringLength = (hexStringLength % 2) ? hexStringLength + 1 : hexStringLength;
 
     // Attempt to load the hex characters into memory as raw data.
-    unsigned char *dataLocation = loadHexStringToMemory(hexString);
+    char *dataLocation = loadHexStringToMemory(hexString);
     if(!dataLocation) {
         printf("Error: hexToBase64 failed to load hex data into memory.\n");
         exit(-1);
