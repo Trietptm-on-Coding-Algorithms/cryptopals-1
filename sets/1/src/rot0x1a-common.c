@@ -129,6 +129,9 @@ xorDecryptedMessage *decryptHexStringUsingXOR(char *cipherText, int keyLength){
         return result;
     }
 
+    // TODO: For now, we only support a key length of 1. This should fixed in the future.
+    keyLength = 1;
+
     // Get the number of characters in the hex string and the decoded message.
     int numberOfHexCharacters = strlen(cipherText);
     int messageLength = numberOfHexCharacters / 2;
@@ -176,5 +179,12 @@ xorDecryptedMessage *decryptHexStringUsingXOR(char *cipherText, int keyLength){
 
     // Clean up and return.
     free(cipheredString);
+    return result;
+}
+
+
+char *xorDataBlockWithRepeatingKey(unsigned char *dataBlockOne, int dataBlockLength, char *xorKey) {
+    char *result = NULL;
+
     return result;
 }
