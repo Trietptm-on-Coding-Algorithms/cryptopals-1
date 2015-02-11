@@ -132,9 +132,6 @@ xorDecryptedMessage *decryptHexStringUsingXOR(char *cipherText, int keyLength){
         return result;
     }
 
-    // TODO: For now, we only support a key length of 1. This should fixed in the future.
-    keyLength = 1;
-
     // Get the number of characters in the hex string and the decoded message.
     int numberOfHexCharacters = strlen(cipherText);
     int messageLength = numberOfHexCharacters / 2;
@@ -148,15 +145,23 @@ xorDecryptedMessage *decryptHexStringUsingXOR(char *cipherText, int keyLength){
     char *cipheredString = loadHexStringToMemory(cipherText);
 
     // Check all common ASCII characters as the key.
-    for(char xorValue=' '; xorValue<='}'; xorValue++){
+    char *keyBuffer = calloc(sizeof(char) * (keyLength + 1), sizeof(char));
+    checkAllKeyCombinations(result, cipheredString, messageLength, keyBuffer, 0, keyLength);
 
-        // Create a string the same length as the ciphertext containing only the current ASCII value.
-        char *keyString = malloc(numberOfHexCharacters);
-        memset(keyString, xorValue, numberOfHexCharacters);
+    // Clean up and return.
+    free(keyBuffer);
+    free(cipheredString);
+    return result;
+}
+
+
+void checkAllKeyCombinations(xorDecryptedMessage* result, char *cipherText, int messageLength, char *keyBuffer, int index, int keyLength) {
+    // If the key is the desired length, print it and return.
+    if (index == keyLength) {
+        keyBuffer[keyLength] = '\0';
 
         // XOR the cipher string and our key string together and free the keyString.
-        char *xorResult = xorDataBlock(cipheredString, keyString, numberOfHexCharacters);
-        free(keyString);
+        char *xorResult = xorDataBlock(cipherText, keyBuffer, (messageLength * 2));
 
         // Load the XOR'ed data into memory so we can treat it like a string.
         char *xorResultInMemory = loadHexStringToMemory(xorResult);        
@@ -164,7 +169,7 @@ xorDecryptedMessage *decryptHexStringUsingXOR(char *cipherText, int keyLength){
 
         // Count how many spaces and English alphabet ASCII characters are in the decoded string.
         int thisMatchCount = 0;
-        for(int j=0; j<numberOfHexCharacters; j++){
+        for(int j=0; j<(messageLength * 2); j++){
             if(('A' <= xorResultInMemory[j] && xorResultInMemory[j] <= 'z') || xorResultInMemory[j] == ' '){
                 thisMatchCount++;
             }
@@ -173,14 +178,18 @@ xorDecryptedMessage *decryptHexStringUsingXOR(char *cipherText, int keyLength){
         // If this decrypted string contains more matches than the previous best, save it and the key.
         if(thisMatchCount > result->numberOfMatches){
             result->numberOfMatches = thisMatchCount;
-            //strncpy(result->key, xorValue, keyLength);
-            *(result->key) = xorValue;
+            strncpy(result->key, keyBuffer, keyLength);
             strncpy(result->message, (const char *)xorResultInMemory, messageLength);
         }
         free(xorResultInMemory);
-    }
 
-    // Clean up and return.
-    free(cipheredString);
-    return result;
+        return;
+
+    // If the key is not long enough, add the character loop.
+    } else {
+        for (char i=' '; i<='}'; i++) {
+            keyBuffer[index] = i;
+            checkAllKeyCombinations(result, cipherText, messageLength, keyBuffer, index + 1, keyLength);
+        }
+    }
 }
