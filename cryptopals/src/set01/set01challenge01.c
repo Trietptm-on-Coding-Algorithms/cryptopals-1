@@ -19,14 +19,14 @@ char *solveSet1Challenge01(char *hexString){
     char *dataLocation = loadHexStringToMemory(hexString);
     if(!dataLocation) {
         printf("Error: hexToBase64 failed to load hex data into memory.\n");
-        exit(-1);
+        return result;
     }
 
     // Get the base64 representation of data we stored in memory.
     result = base64Encode(dataLocation, hexStringLength/2);
     if(!result) {
         printf("Error: hexToBase64 failed to get base64 encoding of data.\n");
-        exit(-1);
+        return result;
     }
 
     // Clean up the mess we made and return.
