@@ -43,7 +43,6 @@ xorDecryptedMessage *solveSet1Challenge04(char *fileName) {
     result->message = NULL;
 
     // We also want to report the line number that contained the encrypted string.
-    int winningLineNumber = 0;
     int currentLineNumber = 0;
 
     // Split the file using newlines as delimiters and test each string.s
@@ -60,7 +59,6 @@ xorDecryptedMessage *solveSet1Challenge04(char *fileName) {
         // If this decrypted string contains more matches than the previous best, save it and the key.
         if(result->numberOfMatches < currentDecryptedMessage->numberOfMatches){
 
-            winningLineNumber = currentLineNumber;
             result->numberOfMatches = currentDecryptedMessage->numberOfMatches;
 
             // If we had a previous best match for the key, we can free it now.
