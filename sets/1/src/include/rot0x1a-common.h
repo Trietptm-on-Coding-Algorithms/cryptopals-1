@@ -61,11 +61,25 @@ char *xorDataBlocks(unsigned char *dataBlockOne, unsigned char *dataBlockTwo, in
   * Decrypt a hex string representing an XOR'ed ASCII string by finding the key of a 
   * specified length that results in the highest number of ASCII characters when XOR'ed again.
   *
+  * NOTE: Currently only works with keyLength of 1
+  *
   * @param cipherText The hex string representing XOR'ed bytes of ASCII text.
   * @param keyLength The length of the key to use when XOR'ing the ciphertext.
   *
   * @return The struct containing the number of ASCII matches, the key, and the message found.
   */
 xorDecryptedMessage *decryptHexStringUsingXOR(char *cipherText, int keyLength);
+
+
+/**
+  * XOR a datablock for a specified length using a specified key, repeating the key if necessary.
+  *
+  * @param dataBlock The block of data to XOR using the key.
+  * @param dataBlockLength The number of bytes to XOR.
+  * @param xorKey The key to use when XOR'ing the dataBlock.
+  *
+  * @return The string of hex bytes resulting from the XOR operation.
+  */
+char *xorDataBlockWithRepeatingKey(unsigned char *dataBlock, int dataBlockLength, char *xorKey);
 
 #endif
