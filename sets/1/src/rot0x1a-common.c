@@ -62,19 +62,19 @@ char *base64Encode(unsigned char *data, int dataLength){
     int numWrote = 0;
     for(int i=0; i<dataLength; i+=3){
 
-        // Grab the next 24 bit chunk of data to encode.
+        // Load the next 24 bit chunk of data to encode into currentChunk.
         unsigned int currentChunk = 0;
-        currentChunk = currentChunk | (data[i + 0]  << 16); // Grab bits [23, 22, 21, 20, 19, 18, 17, 16]
-        currentChunk = currentChunk | (data[i + 1]  <<  8); // Grab bits [15, 14, 13, 12, 11, 10,  9,  8]
-        currentChunk = currentChunk | (data[i + 2]  <<  0); // Grab bits [ 7,  6,  5,  4,  3,  2,  1,  0]
+        currentChunk = currentChunk | (data[i + 0]  << 16); // Load bits [23, 22, 21, 20, 19, 18, 17, 16]
+        currentChunk = currentChunk | (data[i + 1]  <<  8); // Load bits [15, 14, 13, 12, 11, 10,  9,  8]
+        currentChunk = currentChunk | (data[i + 2]  <<  0); // Load bits [ 7,  6,  5,  4,  3,  2,  1,  0]
 
-        // Divide the currentChunk into 4 6-bit blocks.
+        // Divide the 24 bits we loaded in currentChunk into 4 6-bit blocks.
         unsigned int block1 = (currentChunk & 0xFC0000) >> 18;  // block1 consists of bits: [23, 22, 21, 20, 19, 18]
         unsigned int block2 = (currentChunk & 0x03F000) >> 12;  // block2 consists of bits: [17, 16, 15, 14, 13, 12]
         unsigned int block3 = (currentChunk & 0x000FC0) >>  6;  // block3 consists of bits: [11, 10,  9,  8,  7,  6]
         unsigned int block4 = (currentChunk & 0x00003F) >>  0;  // block4 consists of bits: [ 5,  4,  3,  2,  1,  0]
 
-        // Append the base64 character for each block onto the result.
+        // Append the base64 character representing each block onto the result.
         strncpy(result + numWrote++, &BASE64_ENCODING_VALUES[block1], sizeof(char)); // Copy base64 encoding of block 1
         strncpy(result + numWrote++, &BASE64_ENCODING_VALUES[block2], sizeof(char)); // Copy base64 encoding of block 2
         strncpy(result + numWrote++, &BASE64_ENCODING_VALUES[block3], sizeof(char)); // Copy base64 encoding of block 3
