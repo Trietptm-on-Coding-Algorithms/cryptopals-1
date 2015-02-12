@@ -89,4 +89,6 @@ xorDecryptedMessage *decryptHexStringUsingXOR(char *cipherText, int keyLength);
 void checkAllKeyCombinations(xorDecryptedMessage* result, char *cipherText, int messageLength, char *keyBuffer, int index, int keyLength);
 
 
+int computeHammingDistance(char *stringOne, char *stringTwo);
+
 #endif
