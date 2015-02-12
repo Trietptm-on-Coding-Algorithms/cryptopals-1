@@ -11,12 +11,15 @@ xorDecryptedMessage *solveSet1Challenge04(char *fileName) {
     xorDecryptedMessage *result = NULL;
     
     // Check for invalid arguments.
-    fileName = (!fileName || strlen(fileName) < 1) ? "./resources/s1c04.strings" : fileName;
+    if(!fileName || strlen(fileName) < 1){
+        printf("Received empty filename. Returning NULL.\n");
+        return result;
+    }
 
     // Attempt to open the file provided.
     int stringFileFD = open(fileName, O_RDONLY);
     if(stringFileFD < 0){
-        printf("Could not open file [%s]. Quitting.\n", fileName);
+        printf("Could not open file [%s]. Returning NULL.\n", fileName);
         return result;
     }
 
@@ -28,7 +31,7 @@ xorDecryptedMessage *solveSet1Challenge04(char *fileName) {
     // Map the file into memory.
     char *fileMapping = mmap(NULL, fileSize, PROT_READ | PROT_WRITE, MAP_PRIVATE, stringFileFD, 0);
     if(fileMapping == MAP_FAILED){
-        printf("Could not map file to memory. Quitting.\n");
+        printf("Could not map file to memory. Returning NULL.\n");
         return result;
     }
 
