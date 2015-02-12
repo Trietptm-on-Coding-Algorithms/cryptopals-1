@@ -225,7 +225,7 @@ char *xorDataBlock(char *dataBlock, char *xorKey, int dataBlockLength){
 
     // TODO: Do we need this?
     // Verify the data block length is an even length.
-    // dataBlockLength += (dataBlockLength % 2);
+    dataBlockLength += (dataBlockLength % 2);
     
     result = calloc(dataBlockLength + 1, sizeof(char));
     if (!result){
@@ -383,7 +383,7 @@ int computeHammingDistance(char *stringOne, char *stringTwo){
 
     result = 0;
     for(int i=0; i<stringLength; i++){
-        char *xorResult = xorDataBlock(stringOne + i, stringTwo + i, sizeof(char));        
+        char *xorResult = xorDataBlock(stringOne + i, stringTwo + i, sizeof(char)); 
         char *xorResultInMemory = loadHexStringToMemory(xorResult);
 
         for(int j=0; j<8; j++){
