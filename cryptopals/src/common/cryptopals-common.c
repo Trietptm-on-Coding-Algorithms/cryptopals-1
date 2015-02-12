@@ -112,10 +112,8 @@ char *xorDataBlock(char *dataBlock, char *xorKey, int dataBlockLength) {
         return result;
     }
 
-    // The data block 
-    dataBlockLength = (dataBlockLength % 2) ? dataBlockLength + 1 : dataBlockLength;
-    
-    // TODO: This memory block needs to be bigger than expected for set01challenge04. Find out why.
+    // Determine the data block length and allocate memory for the result.
+    dataBlockLength = (dataBlockLength % 2) ? dataBlockLength + 1 : dataBlockLength;    
     result = calloc(dataBlockLength + 5, sizeof(char));
     if(!result){
         printf("Error: xorDataBlocks Could not allocate memory.\n");
@@ -124,8 +122,8 @@ char *xorDataBlock(char *dataBlock, char *xorKey, int dataBlockLength) {
 
     for(int i=0; i<dataBlockLength/2; i++){
         // Obtain the next bytes to XOR
-        char dataBlockByte = dataBlock[i];
-        char xorKeyByte = xorKey[i % xorKeyLength];
+        unsigned char dataBlockByte = dataBlock[i];
+        unsigned char xorKeyByte = xorKey[i % xorKeyLength];
     
         // Store the XOR result as two hex characters representing the byte.
         sprintf(result + (2 * i), "%02x", dataBlockByte ^ xorKeyByte);
