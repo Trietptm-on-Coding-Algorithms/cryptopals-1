@@ -214,6 +214,7 @@ void checkAllKeyCombinations(xorDecryptedMessage* result, char *cipherText, int 
         char *xorResult = xorDataBlock(cipherText, keyBuffer, ((messageLength * 2) + 1));
         if(!xorResult){
             printf("Error: checkAllKeyCombinations Could not XOR datablocks.\n");
+            return;
         }
 
         // Load the XOR'ed data into memory so we can treat it like a string.
@@ -240,7 +241,6 @@ void checkAllKeyCombinations(xorDecryptedMessage* result, char *cipherText, int 
             strncpy(result->message, (const char *)xorResultInMemory, messageLength);
         }
         free(xorResultInMemory);
-
         return;
 
     // If the key is not long enough, add the character loop.
@@ -250,4 +250,35 @@ void checkAllKeyCombinations(xorDecryptedMessage* result, char *cipherText, int 
             checkAllKeyCombinations(result, cipherText, messageLength, keyBuffer, index + 1, keyLength);
         }
     }
+}
+
+
+int computeHammingDistance(char *stringOne, char *stringTwo){
+    int result = -1;
+
+    if(!stringOne || !stringTwo || strlen(stringOne) < 1 || strlen(stringTwo) < 1){
+        printf("Error: computeHammingDistance received null or empty arguments.\n");
+        return result;
+    }
+
+    int stringLength = strlen(stringOne);
+    if(stringLength != strlen(stringTwo)){
+        printf("Error: computeHammingDistance arguments must be same length.\n");
+        return result;
+    }
+
+    result = 0;
+    for(int i=0; i<stringLength; i++){
+        char *xorResult = xorDataBlock(stringOne + i, stringTwo + i, sizeof(char));        
+        char *xorResultInMemory = loadHexStringToMemory(xorResult);
+
+        for(int j=0; j<8; j++){
+            int isBitSet = ((xorResultInMemory[0] >> j) % 2) ? 1 : 0;
+            result += isBitSet;
+        }
+
+        free(xorResultInMemory);
+        free(xorResult);
+    }
+    return result;
 }
