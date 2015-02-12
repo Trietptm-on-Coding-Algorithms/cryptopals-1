@@ -114,7 +114,9 @@ char *xorDataBlock(char *dataBlock, char *xorKey, int dataBlockLength) {
 
     // The data block 
     dataBlockLength = (dataBlockLength % 2) ? dataBlockLength + 1 : dataBlockLength;
-    result = calloc(dataBlockLength + 1, sizeof(char));
+    
+    // TODO: This memory block needs to be bigger than expected for set01challenge04. Find out why.
+    result = calloc(dataBlockLength + 5, sizeof(char));
     if(!result){
         printf("Error: xorDataBlocks Could not allocate memory.\n");
         return result;
