@@ -89,6 +89,9 @@ xorDecryptedMessage *decryptHexStringUsingXOR(char *cipherText, int keyLength);
 void checkAllKeyCombinations(xorDecryptedMessage* result, char *cipherText, int messageLength, char *keyBuffer, int index, int keyLength);
 
 
+char *base64Decode(char *data);
+char *loadMemoryToHexString(char *data, int numberOfBytes);
 int computeHammingDistance(char *stringOne, char *stringTwo);
-
+int isValidBase64String(char *base64String);
+int isValidHexadecimalString(char *hexString);
 #endif
