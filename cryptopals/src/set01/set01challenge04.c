@@ -87,13 +87,15 @@ xorDecryptedMessage *solveSet1Challenge04(char *fileName) {
     }
 
     // End the string at any newlines it may contain.
-    char *decryptedMessagePtr = result->message;
-    while(*decryptedMessagePtr != '\0'){
-        if(*decryptedMessagePtr == '\n'){
-            *decryptedMessagePtr = '\0';
-        } else {
-            decryptedMessagePtr++;
-        }
+    if(result->message){
+        char *decryptedMessagePtr = result->message;
+        while(*decryptedMessagePtr != '\0'){
+            if(*decryptedMessagePtr == '\n'){
+                *decryptedMessagePtr = '\0';
+            } else {
+                decryptedMessagePtr++;
+            }
+        }        
     }
 
     return result;
