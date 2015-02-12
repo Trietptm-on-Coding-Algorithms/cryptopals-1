@@ -226,16 +226,16 @@ void checkAllKeyCombinations(xorDecryptedMessage* result, char *cipherText, int 
         free(xorResult);
 
         // Count how many spaces and English alphabet ASCII characters are in the decoded string.
-        int thisMatchCount = 0;
+        int thisScore = 0;
         for(int j=0; j<(messageLength * 2); j++){
             if(('A' <= xorResultInMemory[j] && xorResultInMemory[j] <= 'z') || xorResultInMemory[j] == ' '){
-                thisMatchCount++;
+                thisScore++;
             }
         }
 
-        // If this decrypted string contains more matches than the previous best, save it and the key.
-        if(thisMatchCount > result->numberOfMatches){
-            result->numberOfMatches = thisMatchCount;
+        // If this decrypted string scores higher than the previous best, save it and the key.
+        if(thisScore > result->score){
+            result->score = thisScore;
             strncpy(result->key, keyBuffer, keyLength);
             strncpy(result->message, (const char *)xorResultInMemory, messageLength);
         }

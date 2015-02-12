@@ -11,12 +11,12 @@ static const char BASE64_ENCODING_VALUES[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgh
 /**
   * A struct representing the result of an XOR decryption attempt.
   *
-  * @param numberOfMatches The number of US ASCII characters found in the attempt.
+  * @param score The score indicating the confidence of success. Based on English ASCII characters found.
   * @param key The string XOR'ed with the cipher text to arrive at this result.
   * @param message The deciphered text found by XOR'ing the ciphertext with the key.
   */
 typedef struct {
-    int numberOfMatches;
+    int score;
     char *key;
     char *message;
 } xorDecryptedMessage;
@@ -68,7 +68,7 @@ char *xorDataBlock(char *dataBlock, char *xorKey, int dataBlockLength);
   * @param cipherText The hex string representing XOR'ed bytes of ASCII text.
   * @param keyLength The length of the key to use when XOR'ing the ciphertext.
   *
-  * @return The struct containing the number of ASCII matches, the key, and the message found.
+  * @return The struct containing the key, message, and score indicating confidence in the success found.
   */
 xorDecryptedMessage *decryptHexStringUsingXOR(char *cipherText, int keyLength);
 

@@ -41,7 +41,7 @@ xorDecryptedMessage *solveSet1Challenge04(char *fileName) {
         printf("Could not obtain memory.\n");
         return result;
     }
-    result->numberOfMatches = 0;
+    result->score = 0;
     result->key = NULL;
     result->message = NULL;
 
@@ -60,9 +60,9 @@ xorDecryptedMessage *solveSet1Challenge04(char *fileName) {
         }
 
         // If this decrypted string contains more matches than the previous best, save it and the key.
-        if(result->numberOfMatches < currentDecryptedMessage->numberOfMatches){
+        if(result->score < currentDecryptedMessage->score){
 
-            result->numberOfMatches = currentDecryptedMessage->numberOfMatches;
+            result->score = currentDecryptedMessage->score;
 
             // If we had a previous best match for the key, we can free it now.
             if(result->key != NULL){
