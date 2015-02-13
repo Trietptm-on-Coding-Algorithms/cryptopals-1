@@ -113,7 +113,7 @@ int isBase64(char *base64String){
         int isSpecialChar   = (base64String[i] >= '+') && ('/' >= base64String[i]);
         
         int isEquals        = 0;
-        if((base64String[i] == '=')){
+        if(base64String[i] == '='){
             char nextChar = base64String[i+1];
             if(nextChar == '='){
                 nextChar = base64String[i+2];
