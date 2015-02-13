@@ -39,6 +39,7 @@ xorDecryptedMessage *solveSet1Challenge04(char *fileName) {
     result = malloc(sizeof(xorDecryptedMessage));
     if(!result){
         printf("Error: solveSet1Challenge04 failed to allocate memory for result.\n");
+        munmap(fileMapping, fileSize);
         close(stringFileFD);
         return result;
     }
@@ -97,6 +98,7 @@ xorDecryptedMessage *solveSet1Challenge04(char *fileName) {
         currentEncryptedString = strtok(NULL, "\n");
     }
 
+    munmap(fileMapping, fileSize);
     close(stringFileFD);
     return result;
 }
