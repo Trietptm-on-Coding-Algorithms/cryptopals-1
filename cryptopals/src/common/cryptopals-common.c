@@ -216,11 +216,10 @@ char *decodeBase64(char *base64String){
     }    
 
     unsigned int numWrote = 0;
-    for(int i=0; i<numberOfBytes; i+=4){
+    for(int i=0; i<base64Characters; i+=4){
 
         // Divide the chunk into 4 6 bit blocks based on the encoding values.
         const char *currentChunk = base64String + i;
-
         unsigned int block1 = (int)(strchr(BASE64_ENCODING_VALUES, currentChunk[0]) - BASE64_ENCODING_VALUES);
         unsigned int block2 = (int)(strchr(BASE64_ENCODING_VALUES, currentChunk[1]) - BASE64_ENCODING_VALUES);
         unsigned int block3 = 0;
