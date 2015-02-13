@@ -74,9 +74,7 @@ char *decodeHex(char *hexString){
     // Number of bytes needed is half the string length since 2 characters is one byte.
     int numberOfBytes = strlen(hexString) / 2;
 
-    // TODO: Figure out why we cannot allocate half the length without breaking challenge 4. Allocate full string length for now.
      result = calloc(numberOfBytes + 1, sizeof(char));
-    //result = calloc(strlen(hexString) + 1, sizeof(char));
     if (!result){
         printf("Error: decodeHex could not allocate memory for the result.\n");
         return result;
