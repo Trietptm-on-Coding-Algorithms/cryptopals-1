@@ -73,8 +73,7 @@ char *decodeHex(char *hexString){
 
     // Number of bytes needed is half the string length since 2 characters is one byte.
     int numberOfBytes = strlen(hexString) / 2;
-
-     result = calloc(numberOfBytes + 1, sizeof(char));
+    result = calloc(numberOfBytes + 1, sizeof(char));
     if (!result){
         printf("Error: decodeHex could not allocate memory for the result.\n");
         return result;
@@ -101,8 +100,8 @@ int isBase64(char *base64String){
 
     // Check byte-alignment.
     int base64StringLength = strlen(base64String);
-    if (base64StringLength % 3){
-        printf("Error: isBase64 input length is not a multiple of 3.\n");
+    if (base64StringLength % 4){
+        printf("Error: isBase64 input length is not a multiple of 4.\n");
         return result;
     }
 
@@ -112,9 +111,19 @@ int isBase64(char *base64String){
         int isLowerCase     = (base64String[i] >= 'a') && ('z' >= base64String[i]);
         int isUpperCase     = (base64String[i] >= 'A') && ('Z' >= base64String[i]);
         int isSpecialChar   = (base64String[i] >= '+') && ('/' >= base64String[i]);
-        int isbadEquals     = (base64String[i] == '=') && (('\0' != base64String[i+1] || base64String[i+2] != '\0'));
+        
+        int isEquals        = 0;
+        if((base64String[i] == '=')){
+            char nextChar = base64String[i+1];
+            if(nextChar == '='){
+                nextChar = base64String[i+2];
+                isEquals = (nextChar == '\0');
+            } else {
+                isEquals = (nextChar == '\0');
+            }
+        }
 
-        if (!isNumber && !isLowerCase && !isUpperCase && !isSpecialChar && !isbadEquals){
+        if (!isNumber && !isLowerCase && !isUpperCase && !isSpecialChar && !isEquals){
             printf("Error: isBase64 input contains non-base64 character [%c].\n", base64String[i]);
             return result;
         }
@@ -138,9 +147,9 @@ char *encodeBase64(char *data, int numberOfBytes){
         return result;
     }
 
-    // For every 3 bytes of data, we need 4 characters to represent it.
+    // For every 3 bytes of data, we need 4 characters (8 bytes) to represent it.
     int resultSize = ((numberOfBytes * 3) / 4) * 2;
-
+    
     // If the number of bytes is not a multiple of three, obtain memory for padding characters.
     resultSize += (numberOfBytes % 3) * 2;
 
@@ -175,7 +184,7 @@ char *encodeBase64(char *data, int numberOfBytes){
     }
 
     // If the original data was not a multiple of 3 bytes, we will pad the rest with the "=" character
-    int remainingBytes = numberOfBytes % 3;
+    int remainingBytes = numberOfBytes % 3;    
     if (remainingBytes == 1){
         strncpy(result + numWrote - 2, "==", sizeof(char) * 3);
     } else if (remainingBytes == 2){
@@ -191,13 +200,53 @@ char *decodeBase64(char *base64String){
     char *result = NULL;
 
     // Check that we received valid base64 data.
-    if (isBase64(base64String)){
+    if (!isBase64(base64String)){
         printf("Error: decodeBase64 input is not valid base64.\n");
         return result;
     }
 
-    // TODO: Implement me!
-    printf("NOT YET IMPLEMENTED\n");
+    // For every 4 base64 characters, we need 3 bytes to store it.
+    int base64Characters = strlen(base64String) ;
+
+    int numberOfBytes = (base64Characters / 3) * 4;
+    result = calloc(numberOfBytes + 1, sizeof(char));
+    if (!result){
+        printf("Error: decodeBase64 could not allocate memory for the result.\n");
+        return result;
+    }    
+
+    unsigned int numWrote = 0;
+    for(int i=0; i<numberOfBytes; i+=4){
+
+        // Divide the chunk into 4 6 bit blocks based on the encoding values.
+        const char *currentChunk = base64String + i;
+
+        unsigned int block1 = (int)(strchr(BASE64_ENCODING_VALUES, currentChunk[0]) - BASE64_ENCODING_VALUES);
+        unsigned int block2 = (int)(strchr(BASE64_ENCODING_VALUES, currentChunk[1]) - BASE64_ENCODING_VALUES);
+        unsigned int block3 = 0;
+        unsigned int block4 = 0;
+        if(currentChunk[2] == '='){
+            block2 = block2 & 0xFC;
+            block3 = 0x00;
+            block4 = 0x00;
+        } else if(currentChunk[2] == '='){
+            block3 = block3 & 0xF3;
+            block4 = 0x00;
+        } else {
+            block3 = (int)(strchr(BASE64_ENCODING_VALUES, currentChunk[2]) - BASE64_ENCODING_VALUES);
+            block4 = (int)(strchr(BASE64_ENCODING_VALUES, currentChunk[3]) - BASE64_ENCODING_VALUES);
+        }
+
+        unsigned char byte1 = (block1 << 2) | (block2 >> 4);  // byte1 consists of block1 [5, 4, 3, 2, 1, 0] and block2 [5, 4]
+        unsigned char byte2 = (block2 << 4) | (block3 >> 2);  // byte2 consists of block2 [3, 2, 1, 0] and block3 [5, 4, 3, 2]
+        unsigned char byte3 = (block3 << 6) | (block4 >> 0);  // byte3 consists of block3 [1, 0] and block4 [5, 4, 3, 2, 1, 0]
+
+        // Write the bytes to the result.
+        result[numWrote++] = byte1;
+        result[numWrote++] = byte2;
+        result[numWrote++] = byte3;
+    }
+    result[numWrote++] = '\0';
 
     return result;
 }
