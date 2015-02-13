@@ -29,13 +29,63 @@ xorDecryptedMessage *solveSet1Challenge06(char *fileName){
         return result;
     }
 
-    /*************************** IN DEVELOPMENT ********************/
+    // Load the base64 encoded data into memory.
     char *base64DecodedData = decodeBase64(fileMapping);
     if (!base64DecodedData){
         printf("Error: solveSet1Challenge06 failed to decode base64 data.\n");
         munmap(fileMapping, fileSize);
         return result;    	
     }
+
+
+    /*************************** ACTUAL BREAKING ********************/
+
+    int base64DecodedDataSize = (strlen(fileMapping) / 3) * 4;
+    int keySize = -1;
+    int bestNormalized = -1;
+    int maxKeyLength = ((base64DecodedDataSize / 2) < 40) ? (base64DecodedDataSize/2) : 40; 
+
+    for(int i=2; i<=maxKeyLength; i++){
+    	char *blockOne = calloc(sizeof(char) * (i + 1), sizeof(char));
+    	strncpy(blockOne, base64DecodedData, i);
+
+    	char *blockTwo = calloc(sizeof(char) * (i + 1), sizeof(char));
+    	strncpy(blockTwo, (base64DecodedData + i), i);
+
+    	int hammingDistance = computeHammingDistance(blockOne, blockTwo, i);
+    	int normalized = hammingDistance/i;
+
+    	if(keySize < 0 || bestNormalized < -1){
+    		keySize = i;
+    		bestNormalized = normalized;
+    	} else if (normalized < bestNormalized){
+    		keySize = i;
+    		bestNormalized = normalized;
+    	}
+    }
+
+
+    int numTransposedBlocks = keySize;
+    int transposedBlockLength = base64DecodedDataSize / keySize;
+
+    char **transposedBlocks = calloc(numTransposedBlocks, sizeof(char*));
+    for(int i=0; i<numTransposedBlocks; i++){
+    	transposedBlocks[i] = calloc(transposedBlockLength + 1, sizeof(char));
+    }
+
+    for(int i=0; i<numTransposedBlocks; i++){
+    	for(int j=0; j<transposedBlockLength; j++){
+      	    transposedBlocks[i][j] = (base64DecodedData + i)[j];
+    	}
+    }
+
+    for(int i=0; i<numTransposedBlocks; i++){
+	    xorDecryptedMessage *decryptResult = xorDecrypt(transposedBlocks[i], transposedBlockLength, 1);
+	    printf("\ndecryptResult:\n");
+	    printf("message: %s\n", decryptResult->message);
+    }
+
+ 	printf("Winning keySize %d\n", keySize);
 
     char *stringOne = "this is a test";
     char *stringTwo = "wokka wokka!!!";
