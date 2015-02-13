@@ -21,56 +21,103 @@ typedef struct {
     char *message;
 } xorDecryptedMessage;
 
+
 /**
-  * Provided a string of hex characters, allocate a chunk of memory and load the hex characters into the chunk as raw data.
+  * Validate that a string is valid hex data.
+  *
+  * @param hexString The hex string to validate.
+  * 
+  * @return 1 if valid hex, 0 if not valid hex.
+  */
+int isHex(char *hexString);
+
+
+/**
+  * Returns the specified number of bytes at the provided location encoded as a hex string.
+  *
+  * @param data The location of the data to be encoded.
+  * @param numberOfBytes The number of bytes to encode.
+  *
+  * @return The hex string representation of the data.
+  */
+char *encodeHex(char *data, int numberOfBytes);
+
+
+/**
+  * Provided a string of hex characters, load the data into memory and return a pointer to it.
   * 
   * Hex String Requirements:
   *   1) The hex string must be of even length in order to align the bytes in memory correctly.
   *   2) The string must be null terminated.
   *   2) The string greater than one character.
   *
-  * @param hexString The string of hexadecimal characters to load into memory.
+  * @param hexString The hex string to load into memory.
   *
-  * @return The memory address we loaded the hex data into.
+  * @return The memory address containing the loaded data.
   */
-char *loadHexStringToMemory(char *hexString);
+char *decodeHex(char *hexString);
 
 
 /**
-  * Returns the specified number of bytes at the provided location as a base64 string.
+  * Validate that a string is valid base64 data.
+  *
+  * @param base64String The base64 string to validate.
+  * 
+  * @return 1 if valid base64, 0 if not valid base64.
+  */
+int isBase64(char *base64String);
+
+
+/**
+  * Returns the specified number of bytes at the provided location encoded as a base64 string.
   *
   * @param data The location of the data to be encoded.
   * @param dataLength The number of bytes to encode.
   *
-  * @return The base64 string representation of the data.
+  * @return The numberOfBytes string representation of the data.
   */
-char *base64Encode(char *data, int dataLength);
+char *encodeBase64(char *data, int numberOfBytes);
 
 
 /**
-  * Returns the XOR result of the dataBlock and repeating key for the specified number of bytes.
+  * Provided a string of base64 characters, load the data into memory and return a pointer to it.
+  * 
+  * Hex String Requirements:
+  *   1) The base64 string must be evenly divisible by 4.
+  *   2) The string must be null terminated.
+  *   2) The string greater than one character.
   *
-  * @param dataBlock The block of data to XOR using the key.
+  * @param base64String The base64 string to load into memory.
+  *
+  * @return The memory address containing the loaded data.
+  */
+char *decodeBase64(char *base64String);
+
+
+/**
+  * Returns the XOR result of the data and repeating key for the specified number of bytes.
+  *
+  * @param data The block of data to XOR using the key.
   * @param xorKey The key to use when XOR'ing the dataBlock.
-  * @param dataBlockLength The number of bytes to XOR.
+  * @param numberOfBytes The number of bytes to XOR.
   *
-  * @return The string resulting from the XOR operation.
+  * @return The data resulting from the XOR operation.
   */
-char *xorDataBlock(char *dataBlock, char *xorKey, int dataBlockLength);
+char *xorDataBlock(char *data, char *xorKey, int numberOfBytes);
 
 
 /**
-  * Decrypt a hex string representing an XOR'ed ASCII string by finding the key of a 
-  * specified length that results in the highest number of ASCII characters when XOR'ed again.
+  * Decrypt data by finding the key of a specified length that results in the highest number of common ASCII characters.
   *
-  * NOTE: keyLength of values over 5 may take a long time.
+  * NOTE: keyLength of values over 4 may take a long time.
   *
-  * @param cipherText The hex string representing XOR'ed bytes of ASCII text.
-  * @param keyLength The length of the key to use when XOR'ing the ciphertext.
+  * @param data The block of data to decrypt.
+  * @param numberOfBytes The number of bytes to decrypt.
+  * @param keyLength The length of the key to use when decrypting the data.
   *
-  * @return The struct containing the key, message, and score indicating confidence in the success found.
+  * @return The struct containing the key, message, and confidence score for the success found.
   */
-xorDecryptedMessage *decryptHexStringUsingXOR(char *cipherText, int keyLength);
+xorDecryptedMessage *xorDecrypt(char *data, int numberOfBytes, int keyLength);
 
 
 /**
@@ -80,18 +127,25 @@ xorDecryptedMessage *decryptHexStringUsingXOR(char *cipherText, int keyLength);
   * Note: Thanks to roofis0 for helping me enumerate all possible key values of length n.
   *
   * @param result A preallocated xorDecryptedMessage struct which will be populated with the top match of the decryption attempt.
-  * @param cipherText The XOR'ed ciphertext we will attempt to decrypt.
+  * @param data The data we will attempt to decrypt.
   * @param messageLength The length of the message when decrypted.
   * @param keyBuffer The allocated memory used to recursively iterate through all possible keys.
   * @param index The index in the keyBuffer this recursive call is looking at.
   * @param keyLength The length of the key to XOR the ciphertext with.
   */
-void checkAllKeyCombinations(xorDecryptedMessage* result, char *cipherText, int messageLength, char *keyBuffer, int index, int keyLength);
+void checkAllKeyCombinations(xorDecryptedMessage* result, char *data, int messageLength, char *keyBuffer, int index, int keyLength);
 
 
-char *base64Decode(char *data);
-char *loadMemoryToHexString(char *data, int numberOfBytes);
-int computeHammingDistance(char *stringOne, char *stringTwo);
-int isValidBase64String(char *base64String);
-int isValidHexadecimalString(char *hexString);
+/**
+  * Calculate the Hamming distance between two blocks of data for a given number of bytes.
+  *
+  * @param dataOne The first block of data.
+  * @param dataTwo The second block of data.
+  * @param numberOfBytes The number of bytes to compute the Hamming distance for.
+  *
+  * @return The Hamming distance between the two blocks of data.
+  */
+int computeHammingDistance(char *dataOne, char *dataTwo, int numberOfBytes);
+
+
 #endif
