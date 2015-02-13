@@ -251,18 +251,21 @@ char *decodeBase64(char *base64String){
 }
 
 
-char *xorDataBlock(char *data, char *xorKey, int numberOfBytes){
+char *xorDataBlock(char *data, char *xorKey, int numberOfBytes, int keyLength){
     char *result = NULL;
 
     // Check for invalid arguments.
     if (!data){
         printf("Error: xorDataBlock data input is NULL.\n");
         return result;        
-    } else if (!xorKey || strlen(xorKey) < 1){
-        printf("Error: xorDataBlock xorKey input is NULL or empty.\n");
+    } else if (!xorKey){
+        printf("Error: xorDataBlock xorKey input is NULL.\n");
         return result;
     } else if (numberOfBytes < 1){
         printf("Error: xorDataBlock numberOfBytes input is less than one.\n");
+        return result;
+    } else if (keyLength < 1){
+        printf("Error: xorDataBlock keyLength input is less than one.\n");
         return result;
     }
 
@@ -276,7 +279,7 @@ char *xorDataBlock(char *data, char *xorKey, int numberOfBytes){
     // For each byte of the data, XOR it with the repeating key's next byte and append it to the result.
     for(int i=0; i<numberOfBytes/2; i++){
         unsigned char dataByte = data[i];
-        unsigned char xorKeyByte = xorKey[i % strlen(xorKey)];
+        unsigned char xorKeyByte = xorKey[i % keyLength];
         result[i] = dataByte ^ xorKeyByte;
     }
 
@@ -351,7 +354,7 @@ void checkAllKeyCombinations(xorDecryptedMessage* result, char *data, int messag
         keyBuffer[keyLength] = '\0';
 
         // XOR the cipher string and our key string together and free the keyString.
-        char *xorResult = xorDataBlock(data, keyBuffer, ((messageLength * 2) + 1));
+        char *xorResult = xorDataBlock(data, keyBuffer, ((messageLength * 2) + 1), keyLength);
         if (!xorResult){
             printf("Error: checkAllKeyCombinations could not XOR datablocks.\n");
             return;
@@ -388,11 +391,8 @@ int computeHammingDistance(char *dataOne, char *dataTwo, int numberOfBytes){
     int result = 0;
 
     // Check for invalid arguments.
-    if (!dataOne || !dataTwo || strlen(dataOne) < 1 || strlen(dataTwo) < 1){
-        printf("Error: computeHammingDistance received null or empty arguments.\n");
-        return result;
-    } else if (strlen(dataOne) != strlen(dataTwo)){
-        printf("Error: computeHammingDistance arguments must be same length.\n");
+    if (!dataOne || !dataTwo){
+        printf("Error: computeHammingDistance received null arguments.\n");
         return result;
     } else if (numberOfBytes < 1){
         printf("Error: computeHammingDistance number of bytes less than one.\n");
@@ -403,7 +403,7 @@ int computeHammingDistance(char *dataOne, char *dataTwo, int numberOfBytes){
     for(int i=0; i<numberOfBytes; i++){
 
         // XOR the byte which will return the bits that are unique to each data.
-        char *xorResult = xorDataBlock(dataOne + i, dataTwo + i, sizeof(char) * 2); 
+        char *xorResult = xorDataBlock(dataOne + i, dataTwo + i, sizeof(char) * 2, (numberOfBytes * 2)); 
         if(!xorResult){
             printf("Error: computeHammingDistance call to xorDataBlock failed.\n");
             return result;

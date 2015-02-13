@@ -100,10 +100,11 @@ char *decodeBase64(char *base64String);
   * @param data The block of data to XOR using the key.
   * @param xorKey The key to use when XOR'ing the dataBlock.
   * @param numberOfBytes The number of bytes to XOR.
+  * @param keyLength The number of bytes to use as the key.
   *
   * @return The data resulting from the XOR operation.
   */
-char *xorDataBlock(char *data, char *xorKey, int numberOfBytes);
+char *xorDataBlock(char *data, char *xorKey, int numberOfBytes, int keyLength);
 
 
 /**
