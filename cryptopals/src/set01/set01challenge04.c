@@ -7,54 +7,62 @@
 #include "set01challenge04.h"
 
 xorDecryptedMessage *solveSet1Challenge04(char *fileName) {
-
     xorDecryptedMessage *result = NULL;
     
     // Check for invalid arguments.
     if(!fileName || strlen(fileName) < 1){
-        printf("Received empty filename. Returning NULL.\n");
+        printf("Error: solveSet1Challenge04 input is NULL or empty.\n");
         return result;
     }
 
     // Attempt to open the file provided.
     int stringFileFD = open(fileName, O_RDONLY);
     if(stringFileFD < 0){
-        printf("Could not open file [%s]. Returning NULL.\n", fileName);
+        printf("Error: solveSet1Challenge04 failed to open file.\n");
         return result;
     }
 
     // Get the size of the file.
     struct stat sb;
     fstat(stringFileFD, &sb);
-    size_t fileSize = (sb.st_size);
+    size_t fileSize = sb.st_size;
 
     // Map the file into memory.
     char *fileMapping = mmap(NULL, fileSize, PROT_READ | PROT_WRITE, MAP_PRIVATE, stringFileFD, 0);
     if(fileMapping == MAP_FAILED){
-        printf("Could not map file to memory. Returning NULL.\n");
+        printf("Error: solveSet1Challenge04 failed to map file into memory.\n");
+        close(stringFileFD);
         return result;
     }
 
     // Keep track of our most confident response, gauged by the highest number of ASCII matches.
     result = malloc(sizeof(xorDecryptedMessage));
     if(!result){
-        printf("Could not obtain memory.\n");
+        printf("Error: solveSet1Challenge04 failed to allocate memory for result.\n");
+        close(stringFileFD);
         return result;
     }
     result->score = 0;
     result->key = NULL;
     result->message = NULL;
 
-    // We also want to report the line number that contained the encrypted string.
-    int currentLineNumber = 0;
-
     // Split the file using newlines as delimiters and test each string.s
     char *currentEncryptedString = strtok(fileMapping, "\n");
     while (currentEncryptedString){
 
-        xorDecryptedMessage *currentDecryptedMessage = decryptHexStringUsingXOR(currentEncryptedString, 1);
+        // The number of bytes represented by the data is half the string length since 2 characters represents one byte.
+        int numberOfBytes = strlen(currentEncryptedString) / 2;
+
+        char *encryptedData = decodeHex(currentEncryptedString);
+        if(!encryptedData){
+            printf("Error: solveSet1Challenge04 failed to load hex into memory.\n");
+            continue;
+        }
+
+        xorDecryptedMessage *currentDecryptedMessage = xorDecrypt(encryptedData, numberOfBytes, 1);
         if(!currentDecryptedMessage){
-            printf("Could not decrypt string: %s\n", currentEncryptedString);
+            printf("Error: solveSet1Challenge04 failed to decrypt string.\n");
+            free(encryptedData);
             currentEncryptedString = strtok(NULL, "\n");
             continue;
         }
@@ -84,22 +92,11 @@ xorDecryptedMessage *solveSet1Challenge04(char *fileName) {
         }
 
         // Clean up this round and prepare for the next.
+        free(encryptedData);
         free(currentDecryptedMessage);
         currentEncryptedString = strtok(NULL, "\n");
-        currentLineNumber++;
     }
 
-    // End the string at any newlines it may contain.
-    if(result->message){
-        char *decryptedMessagePtr = result->message;
-        while(*decryptedMessagePtr != '\0'){
-            if(*decryptedMessagePtr == '\n'){
-                *decryptedMessagePtr = '\0';
-            } else {
-                decryptedMessagePtr++;
-            }
-        }        
-    }
-
+    close(stringFileFD);
     return result;
 }

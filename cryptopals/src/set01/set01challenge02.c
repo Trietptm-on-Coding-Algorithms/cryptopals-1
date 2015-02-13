@@ -9,31 +9,58 @@
 char *solveSet1Challenge02(char *hexStringOne, char *hexStringTwo) {
     char *result = NULL;
 
-    hexStringOne = (!hexStringOne || strlen(hexStringOne) < 1) ? "1c0111001f010100061a024b53535009181c" : hexStringOne;
-    hexStringTwo = (!hexStringTwo || strlen(hexStringTwo) < 1) ? "686974207468652062756c6c277320657965" : hexStringTwo;
-
-    if (strlen(hexStringOne) % 2) {
-        printf("Error: Cannot load hex data of odd length into memory.\n");
+    // Check for invalid arguments.
+    if(!hexStringOne || strlen(hexStringOne) < 1){
+        printf("Error: solveSet1Challenge02 hexStringOne input is NULL or empty.\n");
+        return result;
+    } else if(!hexStringTwo || strlen(hexStringTwo) < 1){
+        printf("Error: solveSet1Challenge02 hexStringTwo input is NULL or empty.\n");
+        return result;
+    } else if (strlen(hexStringOne) % 2) {
+        printf("Error: solveSet1Challenge02 hexStringOne input is not byte aligned.\n");
+        return result;
+    } else if (strlen(hexStringOne) != strlen(hexStringTwo)){
+        printf("Error: solveSet1Challenge02 input lengths do not match.\n");
         return result;
     }
 
-    char *dataBlockOne = loadHexStringToMemory(hexStringOne);
+    // Load the first hex string into memory as data.
+    char *dataBlockOne = decodeHex(hexStringOne);
     if(!dataBlockOne){
-        printf("Error: Unable to load string [%s] into memory.\n", hexStringOne);
+        printf("Error: solveSet1Challenge02 unable to load hexStringOne into memory.\n");
         return result;
     }
 
-    char *dataBlockTwo = loadHexStringToMemory(hexStringTwo);
+    // Load the second hex string into memory as data.
+    char *dataBlockTwo = decodeHex(hexStringTwo);
     if(!dataBlockTwo){
-        printf("Error: Unable to load string [%s] into memory.\n", hexStringTwo);
+        printf("Error: solveSet1Challenge02 unable to load hexStringTwo into memory.\n");
+        free(dataBlockOne);
         return result;
     }
 
-    result = xorDataBlock(dataBlockOne, dataBlockTwo, strlen(hexStringOne));
-    free(dataBlockOne);
-    free(dataBlockTwo);
+    // XOR the data
+    char *xorResult = xorDataBlock(dataBlockOne, dataBlockTwo, strlen(hexStringOne));
+    if(!xorResult){
+        printf("Error: solveSet1Challenge02 unable to read memory into hex string.\n");
+        free(dataBlockTwo);
+        free(dataBlockOne);
+        return result;
+    }
 
+    // Retrieve the result as hex for displaying.
+    result = encodeHex(xorResult, strlen(hexStringOne)/2);
+    if(!result){
+        printf("Error: solveSet1Challenge02 unable to read memory into hex string.\n");
+        free(xorResult);
+        free(dataBlockTwo);
+        free(dataBlockOne);
+        return result;
+    }
+
+    // Free memory we no longer need and return the result.
+    free(xorResult);
+    free(dataBlockTwo);
+    free(dataBlockOne);
     return result;
 }
-
-

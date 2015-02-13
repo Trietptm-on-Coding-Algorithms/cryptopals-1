@@ -9,27 +9,34 @@
 char *solveSet1Challenge01(char *hexString){
     char *result = NULL;
 
-    // If no string provided, use the default string.
-    hexString = (hexString) ? hexString : "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
+    // Check for invalid arguments.
+    if(!hexString || strlen(hexString) < 1){
+        printf("Error: solveSet1Challenge01 input is NULL or empty.\n");
+        return result;
+    } else if (strlen(hexString) % 2) {
+        printf("Error: solveSet1Challenge01 input is not byte aligned.\n");
+        return result;
+    }
 
-    int hexStringLength = strlen(hexString);
-    hexStringLength = (hexStringLength % 2) ? hexStringLength + 1 : hexStringLength;
+    // The number of bytes represented by the data is half the string length since 2 characters represents one byte.
+    int numberOfBytes = strlen(hexString) / 2;
 
-    // Attempt to load the hex characters into memory as raw data.
-    char *dataLocation = loadHexStringToMemory(hexString);
+    // Load the hex into memory as data.
+    char *dataLocation = decodeHex(hexString);
     if(!dataLocation) {
-        printf("Error: hexToBase64 failed to load hex data into memory.\n");
+        printf("Error: hexToBase64 failed to load hex into memory.\n");
         return result;
     }
 
     // Get the base64 representation of data we stored in memory.
-    result = base64Encode(dataLocation, hexStringLength/2);
+    result = encodeBase64(dataLocation, numberOfBytes);
     if(!result) {
         printf("Error: hexToBase64 failed to get base64 encoding of data.\n");
+        free(dataLocation);
         return result;
     }
 
-    // Clean up the mess we made and return.
+    // Free memory we no longer need and return the result.
     free(dataLocation);
     return result;
 }

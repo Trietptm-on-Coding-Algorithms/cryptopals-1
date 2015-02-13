@@ -6,6 +6,6 @@ xorDecryptedMessage *solveSet1Challenge06(char *fileName){
     char *stringOne = "this is a test";
     char *stringTwo = "wokka wokka!!!";
 
-    printf("Hamming Distance: %d\n", computeHammingDistance(stringOne, stringTwo));
+    printf("Hamming Distance: %d\n", computeHammingDistance(stringOne, stringTwo, strlen(stringOne)));
     return result;
 }
