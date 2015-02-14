@@ -363,9 +363,7 @@ void checkAllKeyCombinations(xorDecryptedMessage* result, char *data, int messag
         // Count how many spaces and English alphabet ASCII characters are in the decoded string.
         int thisScore = 0;
         for(int j=0; j<(messageLength * 2); j++){
-            if (('A' <= xorResult[j] && xorResult[j] <= 'z') || xorResult[j] == ' '){
-                thisScore++;
-            }
+            thisScore += getLetterScore(xorResult[j]);
         }
 
         // If this decrypted string scores higher than the previous best, save it and the key.
@@ -423,3 +421,160 @@ int computeHammingDistance(char *dataOne, char *dataTwo, int numberOfBytes){
 }
 
 
+double getLetterScore(char letter){
+    double result = 0;
+
+    switch(letter){
+        case 'A':
+        case 'a':
+            result = 8.167;
+            break;
+
+        case 'B':
+        case 'b':
+            result += 1.492;
+            break;
+
+        case 'C':
+        case 'c':
+            result += 2.782;
+            break;
+
+        case 'D':
+        case 'd':
+            result += 4.253;
+            break;
+
+        case 'E':
+        case 'e':
+            result += 12.702;
+            break;
+
+        case 'F':
+        case 'f':
+            result += 2.228;
+            break;
+
+        case 'G':
+        case 'g':
+            result += 2.015;
+            break;
+
+        case 'H':
+        case 'h':
+            result += 6.094;
+            break;
+
+        case 'I':
+        case 'i':
+            result += 6.966;
+            break;
+
+        case 'J':
+        case 'j':
+            result += 0.153;
+            break;
+
+        case 'K':
+        case 'k':
+            result += 0.772;
+            break;
+
+        case 'L':
+        case 'l':
+            result += 4.025;
+            break;
+
+        case 'M':
+        case 'm':
+            result += 2.406;
+            break;
+
+        case 'N':
+        case 'n':
+            result += 6.749;
+            break;
+
+        case 'O':
+        case 'o':
+            result += 7.507;
+            break;
+
+        case 'P':
+        case 'p':
+            result += 1.929;
+            break;
+
+        case 'Q':
+        case 'q':
+            result += 0.095;
+            break;
+
+        case 'R':
+        case 'r':
+            result += 5.987;
+            break;
+
+        case 'S':
+        case 's':
+            result += 6.327;
+            break;
+
+        case 'T':
+        case 't':
+            result += 9.056;
+            break;
+
+        case 'U':
+        case 'u':
+            result += 2.758;
+            break;
+
+        case 'V':
+        case 'v':
+            result += 0.978;
+            break;
+
+        case 'W':
+        case 'w':
+            result += 2.360;
+            break;
+
+        case 'X':
+        case 'x':
+            result += 0.150;
+            break;
+
+        case 'Y':
+        case 'y':
+            result += 1.974;
+            break;
+
+        case 'Z':
+        case 'z':
+            result += 0.074;
+            break;
+
+        case '\0':
+        case ' ':
+        case '\n':
+        case ')':
+        case '(':
+        case ',':
+        case ':':
+        case ';':
+        case '.':
+        case '!':
+        case '?':
+        case '\'':
+        case '"':
+            result += 0.0;
+            break;
+
+        default:
+            result -= 50.0;
+            break;
+    }
+
+    return result;
+}
