@@ -64,6 +64,7 @@ xorDecryptedMessage *solveSet1Challenge06(char *fileName){
     	}
     }
 
+ 	printf("Winning keySize %d\n", keySize);
 
     int numTransposedBlocks = keySize;
     int transposedBlockLength = base64DecodedDataSize / keySize;
@@ -82,10 +83,11 @@ xorDecryptedMessage *solveSet1Challenge06(char *fileName){
     for(int i=0; i<numTransposedBlocks; i++){
 	    xorDecryptedMessage *decryptResult = xorDecrypt(transposedBlocks[i], transposedBlockLength, 1);
 	    printf("\ndecryptResult:\n");
+	    printf("score: %f\n", decryptResult->score);
+	    printf("key: %s\n", decryptResult->key);
 	    printf("message: %s\n", decryptResult->message);
     }
 
- 	printf("Winning keySize %d\n", keySize);
 
     char *stringOne = "this is a test";
     char *stringTwo = "wokka wokka!!!";
