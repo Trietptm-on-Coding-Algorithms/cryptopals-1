@@ -16,7 +16,7 @@ static const char BASE64_ENCODING_VALUES[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgh
   * @param message The deciphered text found by XOR'ing the ciphertext with the key.
   */
 typedef struct {
-    int score;
+    double score;
     char *key;
     char *message;
 } xorDecryptedMessage;
@@ -148,5 +148,7 @@ void checkAllKeyCombinations(xorDecryptedMessage* result, char *data, int messag
   */
 int computeHammingDistance(char *dataOne, char *dataTwo, int numberOfBytes);
 
+
+double getLetterScore(char letter);
 
 #endif
