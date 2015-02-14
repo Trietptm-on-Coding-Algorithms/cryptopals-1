@@ -62,6 +62,9 @@ xorDecryptedMessage *solveSet1Challenge06(char *fileName){
     		keySize = i;
     		bestNormalized = normalized;
     	}
+
+    	free(blockOne);
+    	free(blockTwo);
     }
 
  	printf("Winning keySize %d\n", keySize);
@@ -77,23 +80,28 @@ xorDecryptedMessage *solveSet1Challenge06(char *fileName){
     for(int i=0; i<numTransposedBlocks; i++){
     	for(int j=0; j<transposedBlockLength; j++){
       	    transposedBlocks[i][j] = (base64DecodedData + i)[j];
+      	    transposedBlocks[i][j+1] = '\0';
     	}
     }
 
+    xorDecryptedMessage **decryptedBlocks = calloc(numTransposedBlocks, sizeof(char*));
     for(int i=0; i<numTransposedBlocks; i++){
-	    xorDecryptedMessage *decryptResult = xorDecrypt(transposedBlocks[i], transposedBlockLength, 1);
-	    printf("\ndecryptResult:\n");
-	    printf("score: %f\n", decryptResult->score);
-	    printf("key: %s\n", decryptResult->key);
-	    printf("message: %s\n", decryptResult->message);
+	    decryptedBlocks[i] = xorDecrypt(transposedBlocks[i], transposedBlockLength, 1);
+    }
+
+    for(int i=0; i<=numTransposedBlocks; i++){
+//	    decryptedBlocks[i] = xorDecrypt(transposedBlocks[i], transposedBlockLength, 1);
     }
 
 
-    char *stringOne = "this is a test";
-    char *stringTwo = "wokka wokka!!!";
-    printf("Hamming Distance: %d\n", computeHammingDistance(stringOne, stringTwo, strlen(stringOne)));
-
-
+    for(int i=0; i<numTransposedBlocks; i++){
+    	free(transposedBlocks[i]);
+    	free(decryptedBlocks[i]->key);
+    	free(decryptedBlocks[i]->message);
+    	free(decryptedBlocks[i]);
+    }
+	free(transposedBlocks);
+	free(decryptedBlocks);
     free(base64DecodedData);
 
     return result;
