@@ -150,5 +150,22 @@ int computeHammingDistance(char *dataOne, char *dataTwo, int numberOfBytes);
 
 
 double getLetterScore(char letter);
+char **divideDataIntoBlocks(char *data, int numberOfBytes, int blockSize);
+
+/**
+  *                                                                   Column
+  *                   Column                                       ------------                         
+  *             ------------------                                | 1  2  3  4 |
+  *            | 1  2  3  4  5  6 |                           ----+------------|
+  *        ----+------------------|                           | 1 | A  G  M  S |
+  *     R  | 1 | A  B  C  D  E  F |                        R  | 2 | B  H  N  T |
+  *     o  | 2 | G  H  I  J  K  L |     -------------->    o  | 3 | C  I  O  U |
+  *     w  | 3 | M  N  O  P  Q  R |                        w  | 4 | D  J  P  V |
+  *     s  | 4 | S  T  U  V  W  X |                        s  | 2 | E  K  Q  W |
+  *         ----------------------                            | 3 | F  L  R  X |
+  *                                                            ----------------
+  */
+char **transposeBlocks(char **dataBlocks, int numRows, int numColumns);
+
 
 #endif

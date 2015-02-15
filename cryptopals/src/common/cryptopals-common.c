@@ -578,3 +578,48 @@ double getLetterScore(char letter){
 
     return result;
 }
+
+
+char **divideDataIntoBlocks(char *data, int numberOfBytes, int blockSize){
+    char **result = NULL;
+
+    // Determine the number of blocks required
+    int numberOfBlocks = numberOfBytes / blockSize;
+    while(numberOfBytes > (numberOfBlocks * blockSize)){
+        numberOfBlocks++;
+    }
+
+    // Allocate memory for the result.
+    result = malloc(sizeof(char *) * numberOfBlocks);
+    for(int i=0; i<numberOfBlocks; i++){
+        result[i] = calloc(blockSize + 1, sizeof(char *));
+    }
+
+    // Copy the data into the blocks.
+    for(int i=0; i<numberOfBlocks; i++){
+        for(int j=0; j<blockSize; j++){
+            result[i][j] = (data + (blockSize * i))[j];
+        }
+    }
+    return result;
+}
+
+
+char **transposeBlocks(char **dataBlocks, int numColumns, int numRows){
+    char **result = NULL;
+
+    // Allocate memory for the result.
+    result = malloc(sizeof(char *) * numColumns);
+    for(int i=0; i<numColumns; i++){
+        result[i] = calloc(numRows + 1, sizeof(char *));
+    }
+
+    // Transpose.
+    for(int i=0; i<numColumns; i++){
+        for(int j=0; j<numRows; j++){
+            result[i][j] = dataBlocks[j][i];
+        }
+    }
+
+    return result;
+}
