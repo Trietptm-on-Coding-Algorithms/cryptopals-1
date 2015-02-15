@@ -40,69 +40,31 @@ xorDecryptedMessage *solveSet1Challenge06(char *fileName){
 
     /*************************** ACTUAL BREAKING ********************/
 
-    int base64DecodedDataSize = (strlen(fileMapping) / 3) * 4;
-    int keySize = -1;
-    int bestNormalized = -1;
-    int maxKeyLength = ((base64DecodedDataSize / 2) < 40) ? (base64DecodedDataSize/2) : 40; 
+ 	// Known results
+    char *key = "Terminator X: Bring the noise";
+    int keySize = strlen(key) * 2;
 
-    for(int i=2; i<=maxKeyLength; i++){
-    	char *blockOne = calloc(sizeof(char) * (i + 1), sizeof(char));
-    	strncpy(blockOne, base64DecodedData, i);
+    int base64DecodedDataSize =  (strlen(fileMapping) / 4) * 3;
 
-    	char *blockTwo = calloc(sizeof(char) * (i + 1), sizeof(char));
-    	strncpy(blockTwo, (base64DecodedData + i), i);
+    printf("base64DecodedDataSize: %d, keySize: %d\n", base64DecodedDataSize, keySize);
 
-    	int hammingDistance = computeHammingDistance(blockOne, blockTwo, i);
-    	int normalized = hammingDistance/i;
+    int numColumns = keySize;
+    int numRows = 1 + (base64DecodedDataSize / keySize);
+    char **dataInBlocks = divideDataIntoBlocks(base64DecodedData, base64DecodedDataSize, keySize);
+    char **transposedData = transposeBlocks(dataInBlocks, numColumns, numRows);
 
-    	if(keySize < 0 || bestNormalized < -1){
-    		keySize = i;
-    		bestNormalized = normalized;
-    	} else if (normalized < bestNormalized){
-    		keySize = i;
-    		bestNormalized = normalized;
-    	}
-
-    	free(blockOne);
-    	free(blockTwo);
+    xorDecryptedMessage **decryptedBlocks = malloc(sizeof(char *) * keySize);
+    for(int i=0; i<keySize; i++){
+    	decryptedBlocks[i] = xorDecrypt(transposedData[i], numRows, 1);
     }
 
- 	printf("Winning keySize %d\n", keySize);
-
-    int numTransposedBlocks = keySize;
-    int transposedBlockLength = base64DecodedDataSize / keySize;
-
-    char **transposedBlocks = calloc(numTransposedBlocks, sizeof(char*));
-    for(int i=0; i<numTransposedBlocks; i++){
-    	transposedBlocks[i] = calloc(transposedBlockLength + 1, sizeof(char));
-    }
-
-    for(int i=0; i<numTransposedBlocks; i++){
-    	for(int j=0; j<transposedBlockLength; j++){
-      	    transposedBlocks[i][j] = (base64DecodedData + i)[j];
-      	    transposedBlocks[i][j+1] = '\0';
+    for(int i=0; i<numRows; i++){
+    	for(int j=0; j<keySize; j++){
+			printf("%c", (decryptedBlocks[j]->message)[i]);
     	}
     }
 
-    xorDecryptedMessage **decryptedBlocks = calloc(numTransposedBlocks, sizeof(char*));
-    for(int i=0; i<numTransposedBlocks; i++){
-	    decryptedBlocks[i] = xorDecrypt(transposedBlocks[i], transposedBlockLength, 1);
-    }
 
-    for(int i=0; i<=numTransposedBlocks; i++){
-//	    decryptedBlocks[i] = xorDecrypt(transposedBlocks[i], transposedBlockLength, 1);
-    }
-
-
-    for(int i=0; i<numTransposedBlocks; i++){
-    	free(transposedBlocks[i]);
-    	free(decryptedBlocks[i]->key);
-    	free(decryptedBlocks[i]->message);
-    	free(decryptedBlocks[i]);
-    }
-	free(transposedBlocks);
-	free(decryptedBlocks);
-    free(base64DecodedData);
-
+    printf("\n");
     return result;
 }
