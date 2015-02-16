@@ -623,3 +623,39 @@ char **transposeBlocks(char **dataBlocks, int numColumns, int numRows){
 
     return result;
 }
+
+
+int determineKeySize(char *data, int numberOfBytes, int maxKeySize){
+    int result = -1;
+
+    // Create a space for our hamming distance averages and zero them all out.
+    float hammingAverages[maxKeySize];
+    for(int i=0; i<maxKeySize; i++){
+        hammingAverages[i] = 0.0;
+    }
+
+    // Take as many samples as we can given the data size and maximum key size.
+    int numSamples = (numberOfBytes - maxKeySize) / 2;
+    for(int i=0; i<numSamples; i++){
+
+        // Add the normalized samples together:
+        for(int j=2; j<maxKeySize; j++){
+            char *dataStart = data + i;
+            int hammingDistance = computeHammingDistance(dataStart, dataStart + j, j);
+            float normalized = (float)hammingDistance / (float)j;
+            hammingAverages[j] += normalized;
+        }
+    }
+
+
+    int lowestNormalized = -1;
+    for(int i =2; i<maxKeySize; i++){
+        hammingAverages[i] /= numSamples;
+        if(lowestNormalized < 0 || hammingAverages[i] < lowestNormalized){
+            result = i;
+            lowestNormalized = hammingAverages[i];
+        }
+    }
+
+    return result;
+}

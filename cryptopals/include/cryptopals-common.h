@@ -150,6 +150,7 @@ int computeHammingDistance(char *dataOne, char *dataTwo, int numberOfBytes);
 
 
 double getLetterScore(char letter);
+int determineKeySize(char *data, int numberOfBytes, int maxKeySize);
 char **divideDataIntoBlocks(char *data, int numberOfBytes, int blockSize);
 
 /**
