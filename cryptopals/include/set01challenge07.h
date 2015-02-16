@@ -1,8 +1,9 @@
 #ifndef S1C07_H
 #define S1C07_H
 
-#include "cryptopals-common.h"
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
+#include "cryptopals-common.h"
 #include <fcntl.h>
 #include <unistd.h>
 #include <openssl/aes.h>

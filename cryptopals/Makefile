@@ -21,7 +21,7 @@ ${PROGRAM_NAME}: libs
 	${CC_CMD} src/${PROGRAM_NAME}.c ${ALL_LIBS} ${DEPENDENCIES} -o bin/${PROGRAM_NAME}
 
 ${PROGRAM_NAME}-common: dirs ${COMMON_SRC_FOLDER}/${PROGRAM_NAME}-common.c
-	${CC_CMD} -lcrypto -lssl -c ${COMMON_SRC_FOLDER}/${PROGRAM_NAME}-common.c -o lib/${PROGRAM_NAME}-common.o
+	${CC_CMD} -c ${COMMON_SRC_FOLDER}/${PROGRAM_NAME}-common.c -o lib/${PROGRAM_NAME}-common.o
 
 
 ############ Set 1 library and individual solutions. ############
@@ -47,7 +47,7 @@ set01challenge06: dirs ${PROGRAM_NAME}-common
 	${CC_CMD} -c ${SET_1_SRC_FOLDER}/set01challenge06.c -o lib/set01challenge06.o
 
 set01challenge07: dirs ${PROGRAM_NAME}-common
-	${CC_CMD} -lssl -lcrypto -c ${SET_1_SRC_FOLDER}/set01challenge07.c -o lib/set01challenge07.o
+	${CC_CMD} -c ${SET_1_SRC_FOLDER}/set01challenge07.c -o lib/set01challenge07.o
 
 
 ########################### grunt work ###########################
