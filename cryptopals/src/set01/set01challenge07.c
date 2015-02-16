@@ -11,14 +11,14 @@ char *solveSet1Challenge07(char *fileName, char *key){
 
     // Check for invalid arguments.
     if(!fileName || strlen(fileName) < 1){
-        printf("Error: solveSet1Challenge04 input is NULL or empty.\n");
+        printf("Error: solveSet1Challenge07 input is NULL or empty.\n");
         return result;
     }
 
     // Attempt to open the file provided.
     int stringFileFD = open(fileName, O_RDONLY);
     if(stringFileFD < 0){
-        printf("Error: solveSet1Challenge04 failed to open file.\n");
+        printf("Error: solveSet1Challenge07 failed to open file.\n");
         return result;
     }
 
@@ -30,7 +30,7 @@ char *solveSet1Challenge07(char *fileName, char *key){
     // Map the file into memory.
     char *fileMapping = mmap(NULL, fileSize, PROT_READ | PROT_WRITE, MAP_PRIVATE, stringFileFD, 0);
     if(fileMapping == MAP_FAILED){
-        printf("Error: solveSet1Challenge04 failed to map file into memory.\n");
+        printf("Error: solveSet1Challenge07 failed to map file into memory.\n");
         close(stringFileFD);
         return result;
     }
