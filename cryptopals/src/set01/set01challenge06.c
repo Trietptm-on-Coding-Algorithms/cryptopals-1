@@ -124,15 +124,15 @@ char *solveSet1Challenge06(char *fileName){
     int bytesWritten = 0;
     for(int i=0; i<numRows; i++){
         for(int j=0; j<numColumns; j++){
-            if(bytesWritten <= base64DecodedDataSize){
+            if(bytesWritten < base64DecodedDataSize){
                 *(result + bytesWritten) = (decryptedBlocks[j]->message)[i];
                 bytesWritten++;
             }
-         }
-     }
- 
-    result[bytesWritten - 2] = '\x00';
-//    }
+        }
+    }
+
+    // TODO: Why is this needed?
+    result[bytesWritten - 1] = '\x00';
 
     /* Free allocated memory */
     for(int i=0; i<numRows; i++){
