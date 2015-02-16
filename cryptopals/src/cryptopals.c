@@ -99,5 +99,16 @@ int main(int argc, char **argv) {
         printf("Failed.\n\n");
     }
 
+    printf(" ------------------------ \n");
+    printf("| Set 01 :: Challenge 08 |\n");
+    printf(" ------------------------ \n");
+    char *resultEight = solveSet1Challenge08(SET_1_CHALLENGE_8_INPUT_1);
+    if(resultEight){
+        printf("Encrypted Line:\n%s\n\n", resultEight);
+        free(resultEight);
+    } else {
+        printf("Failed.\n\n");
+    }
+
     return 0;
 }

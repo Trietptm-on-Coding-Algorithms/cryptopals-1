@@ -7,7 +7,7 @@ COMMON_SRC_FOLDER = src/common
 SET_1_SRC_FOLDER = src/set01
 
 COMMON_LIBS = lib/cryptopals-common.o
-SET_ONE_LIBS = lib/set01challenge01.o lib/set01challenge02.o lib/set01challenge03.o lib/set01challenge04.o lib/set01challenge05.o lib/set01challenge06.o lib/set01challenge07.o
+SET_ONE_LIBS = lib/set01challenge01.o lib/set01challenge02.o lib/set01challenge03.o lib/set01challenge04.o lib/set01challenge05.o lib/set01challenge06.o lib/set01challenge07.o lib/set01challenge08.o
 ALL_LIBS = ${COMMON_LIBS} lib/set01.a
 DEPENDENCIES = -lssl -lcrypto
 
@@ -25,7 +25,7 @@ ${PROGRAM_NAME}-common: dirs ${COMMON_SRC_FOLDER}/${PROGRAM_NAME}-common.c
 
 
 ############ Set 1 library and individual solutions. ############
-set01: set01challenge01 set01challenge02 set01challenge03 set01challenge04 set01challenge05 set01challenge06 set01challenge07
+set01: set01challenge01 set01challenge02 set01challenge03 set01challenge04 set01challenge05 set01challenge06 set01challenge07 set01challenge08
 	ar rvs lib/set01.a ${SET_ONE_LIBS}
 
 set01challenge01: dirs ${PROGRAM_NAME}-common
@@ -48,6 +48,9 @@ set01challenge06: dirs ${PROGRAM_NAME}-common
 
 set01challenge07: dirs ${PROGRAM_NAME}-common
 	${CC_CMD} -c ${SET_1_SRC_FOLDER}/set01challenge07.c -o lib/set01challenge07.o
+
+set01challenge08: dirs ${PROGRAM_NAME}-common
+	${CC_CMD} -c ${SET_1_SRC_FOLDER}/set01challenge08.c -o lib/set01challenge08.o
 
 
 ########################### grunt work ###########################
