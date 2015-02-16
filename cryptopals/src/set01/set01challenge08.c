@@ -34,16 +34,23 @@ char *solveSet1Challenge08(char *fileName){
         close(stringFileFD);
         return result;
     }
-    result = NULL;
+
+    // Keep track of the number of matching blocks in the winning line.
     int highestNumberOfMatchingBlocks = 0;
 
-    // Split the file using newlines as delimiters and test each string.s
+    // Split the file using newlines as delimiters and test each string.
     char *currentLine = strtok(fileMapping, "\n");
-    int lineNumber = 0;
     while (currentLine){
     	int lineLength = strlen(currentLine);
     	char **currentLineBlocks = divideDataIntoBlocks(currentLine, lineLength, 16);
+    	if(!currentLineBlocks){
+	        printf("Error: solveSet1Challenge08 failed to divideDataIntoBlocks.\n");
+	        munmap(fileMapping, fileSize);
+	        close(stringFileFD);
+	        return result;
+    	}
 
+    	// Determine how many matching blocks are in this line.
     	int currentLineMatchingBlocks = 0;
     	int numberOfBlocks = lineLength / 16;
     	for(int i=0; i<numberOfBlocks; i++){			
@@ -54,19 +61,39 @@ char *solveSet1Challenge08(char *fileName){
 	    	}
     	}
 
+    	// If this line has more matching blocks than the previous best.
     	if(currentLineMatchingBlocks > highestNumberOfMatchingBlocks){
     		highestNumberOfMatchingBlocks = currentLineMatchingBlocks;
+
+    		// If a less-qualified result was found, free it.
+    		if(result != NULL){
+    			free(result);
+    			result = NULL;
+    		}
+
+    		// Copy the winning line into the result.
     		result = calloc(lineLength + 1, sizeof(char));
+    		if(!result){
+		        printf("Error: solveSet1Challenge08 failed to allocate memory for the result.\n");
+		    	for(int i=0; i<numberOfBlocks; i++){
+		    		free(currentLineBlocks[i]);
+		    	}
+				free(currentLineBlocks);
+		        munmap(fileMapping, fileSize);
+		        close(stringFileFD);
+		        return result;
+    		}
     		strncpy(result, currentLine, lineLength);
     	}
 
+    	// Free all resources we no longer need in this iteration.
     	for(int i=0; i<numberOfBlocks; i++){
     		free(currentLineBlocks[i]);
     	}
 		free(currentLineBlocks);
 
+		// Continue to the next line.
         currentLine = strtok(NULL, "\n");
-        lineNumber++;
     }
 
     // Free resources we no longer need and return the result.
