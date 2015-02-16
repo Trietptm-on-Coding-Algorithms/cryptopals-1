@@ -80,10 +80,9 @@ int main(int argc, char **argv) {
     printf(" ------------------------ \n");
     printf("| Set 01 :: Challenge 06 |\n");
     printf(" ------------------------ \n");
-    xorDecryptedMessage *resultSix = solveSet1Challenge06(SET_1_CHALLENGE_6_INPUT_1);
+    char *resultSix = solveSet1Challenge06(SET_1_CHALLENGE_6_INPUT_1);
     if(resultSix){
-        printf("Expected Message: %s\n", SET_1_CHALLENGE_6_EXPECTED_OUTPUT);
-        printf("Result Message:   %s\n\n", resultSix->message);
+        printf("Result Message:\n%s\n\n", resultSix);
         free(resultSix);
     } else {
         printf("Failed.\n\n");

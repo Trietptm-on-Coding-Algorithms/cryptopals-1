@@ -8,7 +8,7 @@
 #include <sys/types.h>
 #include "cryptopals-common.h"
 
-xorDecryptedMessage *solveSet1Challenge06(char *fileName);
+char *solveSet1Challenge06(char *fileName);
 
     
 

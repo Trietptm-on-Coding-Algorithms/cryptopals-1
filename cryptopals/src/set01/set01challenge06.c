@@ -1,7 +1,7 @@
 #include "set01challenge06.h"
 
-xorDecryptedMessage *solveSet1Challenge06(char *fileName){
-    xorDecryptedMessage *result = NULL;
+char *solveSet1Challenge06(char *fileName){
+    char *result = NULL;
 
     // Check for invalid arguments.
     if(!fileName || strlen(fileName) < 1){
@@ -29,81 +29,111 @@ xorDecryptedMessage *solveSet1Challenge06(char *fileName){
         return result;
     }
 
-    int base64DecodedDataSize =  (strlen(fileMapping) / 4) * 3;
 
     // Load the base64 encoded data into memory.
     char *base64DecodedData = decodeBase64(fileMapping);
     if (!base64DecodedData){
         printf("Error: solveSet1Challenge06 failed to decode base64 data.\n");
+        close(stringFileFD);
         munmap(fileMapping, fileSize);
         return result;    	
     }
 
-
-    /*************************** ACTUAL BREAKING ********************/
-
-    char *stringOne = "this is a test";
-	char *stringTwo = "wokka wokka!!!";
-	int stringLength = strlen(stringOne);
-	int sanityCheck = (computeHammingDistance(stringOne, stringTwo, stringLength) == 37);
-	if(!sanityCheck){
-		printf("Failed computeHammingDistance sanityCheck. Quitting.\n\n");
-		exit(-1);
-	}
-
-
+	// Determine the key size for decrypting the data.
+    int base64DecodedDataSize = (strlen(fileMapping) / 4) * 3;
 	int maxKeySize = 40;
-	float hammingAverages[maxKeySize];
-	for(int i=0; i<maxKeySize; i++){
-		hammingAverages[i] = 0.0;
+	int keySize = determineKeySize(base64DecodedData, base64DecodedDataSize, maxKeySize);
+	if(keySize < 1){
+        printf("Error: solveSet1Challenge06 failed to determineKeySize.\n");
+        free(base64DecodedData);
+        close(stringFileFD);
+        munmap(fileMapping, fileSize);
+        return result;    	
 	}
 
-	// Take as many samples as we can
-	int numSamples = (base64DecodedDataSize - maxKeySize) / 2;
-	for(int i=0; i<numSamples; i++){
-
-		// Add the normalized samples together:
-		for(int j=2; j<maxKeySize; j++){
-			char *dataStart = base64DecodedData + i;
-			int hammingDistance = computeHammingDistance(dataStart, dataStart + j, j);
-			float normalized = (float)hammingDistance / (float)j;
-			hammingAverages[j] += normalized;
-		}
-
+    // Divide the data into blocks
+    char **dataInBlocks = divideDataIntoBlocks(base64DecodedData, base64DecodedDataSize, keySize);
+	if(!dataInBlocks){
+        printf("Error: solveSet1Challenge06 failed to divideDataIntoBlocks.\n");
+        free(base64DecodedData);
+        close(stringFileFD);
+        munmap(fileMapping, fileSize);
+        return result;    	
 	}
 
-	int keySize = -1;
-	int lowestNormalized = -1;
-	for(int i =2; i<maxKeySize; i++){
-		hammingAverages[i] /= numSamples;
-		if(lowestNormalized < 0 || hammingAverages[i] < lowestNormalized){
-			keySize = i;
-			lowestNormalized = hammingAverages[i];
-		}
-	}
- 	printf("numSamples: %d\n", numSamples);
-	printf("keySize: %d\n", keySize);
-	printf("normalized=%f\n", hammingAverages[keySize]);
- 	printf("\n");
-
-
-    // Divide the data into blocks and transpose them.
+    // Transpose the blocks
     int numColumns = keySize;
     int numRows = 1 + (base64DecodedDataSize / keySize);
-    char **dataInBlocks = divideDataIntoBlocks(base64DecodedData, base64DecodedDataSize, keySize);
     char **transposedData = transposeBlocks(dataInBlocks, numColumns, numRows);
+	if(!transposedData){
+        printf("Error: solveSet1Challenge06 failed to transposeBlocks.\n");
+        free(dataInBlocks);
+        free(base64DecodedData);
+        close(stringFileFD);
+        munmap(fileMapping, fileSize);
+        return result;    	
+	}
 
+	// Allocate memory for the decrypted blocks.
     xorDecryptedMessage **decryptedBlocks = calloc(sizeof(char *) * keySize, sizeof(char));
+	if(!decryptedBlocks){
+        printf("Error: solveSet1Challenge06 failed to allocate memory for decryptedBlocks.\n");
+        free(transposedData);
+        free(dataInBlocks);
+        free(base64DecodedData);
+        close(stringFileFD);
+        munmap(fileMapping, fileSize);
+        return result;    	
+	}
+
+	// Decrypt the transposed blocks.
     for(int i=0; i<keySize; i++){
     	decryptedBlocks[i] = xorDecrypt(transposedData[i], numRows, 1);
+		if(!decryptedBlocks[i]){
+	        printf("Error: solveSet1Challenge06 failed to xorDecrypt.\n");
+	        while(--i >= 0){
+	        	free(decryptedBlocks[i]);
+	        }
+	        free(decryptedBlocks);
+	        free(transposedData);
+	        free(dataInBlocks);
+	        free(base64DecodedData);
+	        close(stringFileFD);
+	        munmap(fileMapping, fileSize);
+	        return result;    	
+		}
     }
 
+    // Allocate memory for the result string.
+    result = calloc(base64DecodedDataSize + 1, sizeof(char));
+	if(!result){
+        printf("Error: solveSet1Challenge06 failed to allocate memory for result.\n");
+	    for(int i=0; i<keySize; i++){
+        	free(decryptedBlocks[i]);
+        }
+        free(decryptedBlocks);
+        free(transposedData);
+        free(dataInBlocks);
+        free(base64DecodedData);
+        close(stringFileFD);
+        munmap(fileMapping, fileSize);
+        return result;    	
+	}
+
+    // Copy the decryption results into this function's result.
+    int bytesWritten = 0;
     for(int i=0; i<numRows; i++){
     	for(int j=0; j<numColumns; j++){
-			printf("%c", (decryptedBlocks[j]->message)[i]);
+
+    		// Do not write more bytes than the original data represented
+    		if(bytesWritten < base64DecodedDataSize){
+				*(result + bytesWritten) = (bytesWritten < base64DecodedDataSize) ? (decryptedBlocks[j]->message)[i] : '\0';
+    		} else if (bytesWritten == base64DecodedDataSize) {
+    			*(result + bytesWritten) = '\0';
+    		}
+    		bytesWritten++;
     	}
     }
- 	printf("\n");
 
     /* Free allocated memory */
     for(int i=0; i<numRows; i++){
@@ -121,5 +151,9 @@ xorDecryptedMessage *solveSet1Challenge06(char *fileName){
     free(transposedData);
     free(base64DecodedData);
     free(decryptedBlocks);
+    close(stringFileFD);
+    munmap(fileMapping, fileSize);
+
+    // Return the result.
     return result;
 }
