@@ -16,7 +16,19 @@ This readme will keep you posted on my progress.
 | 5: Implement repeating-key XOR   |    10 Feb 2015 |
 | 6: Break repeating-key XOR       |    15 Feb 2015 |
 | 7: AES in ECB mode               |    15 Feb 2015 |
-| 8: Detect AES in ECB mode        |    IN PROGRESS ||
+| 8: Detect AES in ECB mode        |    15 Feb 2015 ||
 
+##Set 2: Block Crypto
+
+| Challenge                                   | Date Completed |
+| :------------------------------------------ | -------------: |
+| 1: Implement PKCS#7 padding                 |    IN PROGRESS |
+| 2: Implement CBC mode                       |                |
+| 3: An ECB/CBC detection oracle              |                |
+| 4: Byte-at-a-time ECB decryption (Simple)   |                |
+| 5: ECB cut-and-paste                        |                |
+| 6: Byte-at-a-time ECB decryption (Harder)   |                |
+| 7: PKCS#7 padding validation                |                |
+| 8: CBC bitflipping attacks                  |                ||
 
 
