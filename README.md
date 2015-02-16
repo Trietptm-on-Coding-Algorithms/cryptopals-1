@@ -15,8 +15,8 @@ This readme will keep you posted on my progress.
 | 4: Detect single-character XOR   |    09 Feb 2015 |
 | 5: Implement repeating-key XOR   |    10 Feb 2015 |
 | 6: Break repeating-key XOR       |    15 Feb 2015 |
-| 7: AES in ECB mode               |    IN PROGRESS |
-| 8: Detect AES in ECB mode        |      			||
+| 7: AES in ECB mode               |    15 Feb 2015 |
+| 8: Detect AES in ECB mode        |    IN PROGRESS ||
 
 
 
