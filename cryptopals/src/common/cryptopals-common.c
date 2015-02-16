@@ -601,6 +601,7 @@ char **divideDataIntoBlocks(char *data, int numberOfBytes, int blockSize){
             result[i][j] = (data + (blockSize * i))[j];
         }
     }
+
     return result;
 }
 
@@ -647,7 +648,7 @@ int determineKeySize(char *data, int numberOfBytes, int maxKeySize){
         }
     }
 
-
+    // Find the lowest normalize hamming distance. This is probably the key.
     int lowestNormalized = -1;
     for(int i =2; i<maxKeySize; i++){
         hammingAverages[i] /= numSamples;
@@ -656,6 +657,6 @@ int determineKeySize(char *data, int numberOfBytes, int maxKeySize){
             lowestNormalized = hammingAverages[i];
         }
     }
-
+    
     return result;
 }

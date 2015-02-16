@@ -13,6 +13,13 @@
 #include <sys/types.h>
 #include "cryptopals-common.h"
 
+/**
+  * Provided a file containing multiple strings, determine which is an AES-ECB encrypted message.
+  *
+  * @param fileName The location of the file containing the strings.
+  *
+  * @return The AES-ECB encrypted message.
+  */
 char *solveSet1Challenge08(char *fileName);
 
 #endif
