@@ -104,7 +104,7 @@ int main(int argc, char **argv) {
     printf(" ------------------------ \n");
     char *resultEight = solveSet1Challenge08(SET_1_CHALLENGE_8_INPUT_1);
     if(resultEight){
-        printf("Result Message:\n%s\n\n", resultEight);
+        printf("Encrypted Line:\n%s\n\n", resultEight);
         free(resultEight);
     } else {
         printf("Failed.\n\n");

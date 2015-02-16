@@ -35,15 +35,38 @@ char *solveSet1Challenge08(char *fileName){
         return result;
     }
     result = NULL;
+    int highestNumberOfMatchingBlocks = 0;
 
     // Split the file using newlines as delimiters and test each string.s
     char *currentLine = strtok(fileMapping, "\n");
+    int lineNumber = 0;
     while (currentLine){
+    	int lineLength = strlen(currentLine);
+    	char **currentLineBlocks = divideDataIntoBlocks(currentLine, lineLength, 16);
 
-        // The number of bytes represented by the data is half the string length since 2 characters represents one byte.
-        int numberOfBytes = strlen(currentLine);
-        printf("Current line length: %d\n", numberOfBytes);
+    	int currentLineMatchingBlocks = 0;
+    	int numberOfBlocks = lineLength / 16;
+    	for(int i=0; i<numberOfBlocks; i++){			
+	    	for(int j=(i+1); j<numberOfBlocks; j++){
+	    		if(!(strcmp(currentLineBlocks[i], currentLineBlocks[j]))){
+		    		currentLineMatchingBlocks++;
+	    		}
+	    	}
+    	}
+
+    	if(currentLineMatchingBlocks > highestNumberOfMatchingBlocks){
+    		highestNumberOfMatchingBlocks = currentLineMatchingBlocks;
+    		result = calloc(lineLength + 1, sizeof(char));
+    		strncpy(result, currentLine, lineLength);
+    	}
+
+    	for(int i=0; i<numberOfBlocks; i++){
+    		free(currentLineBlocks[i]);
+    	}
+		free(currentLineBlocks);
+
         currentLine = strtok(NULL, "\n");
+        lineNumber++;
     }
 
     // Free resources we no longer need and return the result.
