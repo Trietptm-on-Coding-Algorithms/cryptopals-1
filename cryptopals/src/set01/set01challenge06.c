@@ -40,31 +40,58 @@ xorDecryptedMessage *solveSet1Challenge06(char *fileName){
 
     /*************************** ACTUAL BREAKING ********************/
 
- 	// Known results
-    char *key = "Terminator X: Bring the noise";
-    int keySize = strlen(key) * 2;
+    char *stringOne = "this is a test";
+	char *stringTwo = "wokka wokka!!!";
+	int stringLength = strlen(stringOne);
+	int sanityCheck = (computeHammingDistance(stringOne, stringTwo, stringLength) == 37);
+	if(!sanityCheck){
+		printf("Failed computeHammingDistance sanityCheck. Quitting.\n\n");
+		exit(-1);
+	}
 
+	for(int i=2; i<40; i++){
+		int hamming = computeHammingDistance(base64DecodedData, base64DecodedData + i, i);
+		printf("keySize: %d, hamming: %d, normalized=%d\n", i, hamming, hamming/i);
+	}
+ 	printf("\n");
+
+ 	// Known result, need to calculate on our own.
+    int keySize = 29;
     int base64DecodedDataSize =  (strlen(fileMapping) / 4) * 3;
 
-    printf("base64DecodedDataSize: %d, keySize: %d\n", base64DecodedDataSize, keySize);
-
+    // Divide the data into blocks and transpose them.
     int numColumns = keySize;
     int numRows = 1 + (base64DecodedDataSize / keySize);
     char **dataInBlocks = divideDataIntoBlocks(base64DecodedData, base64DecodedDataSize, keySize);
     char **transposedData = transposeBlocks(dataInBlocks, numColumns, numRows);
 
-    xorDecryptedMessage **decryptedBlocks = malloc(sizeof(char *) * keySize);
+    xorDecryptedMessage **decryptedBlocks = calloc(sizeof(char *) * keySize, sizeof(char));
     for(int i=0; i<keySize; i++){
     	decryptedBlocks[i] = xorDecrypt(transposedData[i], numRows, 1);
     }
 
     for(int i=0; i<numRows; i++){
-    	for(int j=0; j<keySize; j++){
+    	for(int j=0; j<numColumns; j++){
 			printf("%c", (decryptedBlocks[j]->message)[i]);
     	}
     }
+ 	printf("\n");
 
+    /* Free allocated memory */
+    for(int i=0; i<numRows; i++){
+    	free(dataInBlocks[i]);
+    }
 
-    printf("\n");
+    for(int i=0; i<numColumns; i++){
+    	free(decryptedBlocks[i]->key);
+    	free(decryptedBlocks[i]->message);
+    	free(decryptedBlocks[i]);
+    	free(transposedData[i]);
+    }    
+
+    free(dataInBlocks);
+    free(transposedData);
+    free(base64DecodedData);
+    free(decryptedBlocks);
     return result;
 }
