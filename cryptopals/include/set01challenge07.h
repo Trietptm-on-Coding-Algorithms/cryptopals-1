@@ -1,7 +1,9 @@
 #ifndef S1C07_H
 #define S1C07_H
 
+#ifdef __clang__
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif 
 
 #include "cryptopals-common.h"
 #include <fcntl.h>
