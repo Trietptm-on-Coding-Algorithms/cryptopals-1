@@ -277,7 +277,7 @@ char *xorDataBlock(char *data, char *xorKey, int numberOfBytes, int keyLength){
     }    
 
     // For each byte of the data, XOR it with the repeating key's next byte and append it to the result.
-    for(int i=0; i<numberOfBytes/2; i++){
+    for(int i=0; i<(numberOfBytes + 1); i++){
         unsigned char dataByte = data[i];
         unsigned char xorKeyByte = xorKey[i % keyLength];
         result[i] = dataByte ^ xorKeyByte;
@@ -354,7 +354,7 @@ void checkAllKeyCombinations(xorDecryptedMessage* result, char *data, int messag
         keyBuffer[keyLength] = '\0';
 
         // XOR the cipher string and our key string together and free the keyString.
-        char *xorResult = xorDataBlock(data, keyBuffer, ((messageLength * 2) + 1), keyLength);
+        char *xorResult = xorDataBlock(data, keyBuffer, messageLength + 1, keyLength);
         if (!xorResult){
             printf("Error: checkAllKeyCombinations could not XOR datablocks.\n");
             return;
@@ -362,7 +362,7 @@ void checkAllKeyCombinations(xorDecryptedMessage* result, char *data, int messag
 
         // Count how many spaces and English alphabet ASCII characters are in the decoded string.
         int thisScore = 0;
-        for(int j=0; j<(messageLength * 2); j++){
+        for(int j=0; j<messageLength; j++){
             thisScore += getLetterScore(xorResult[j]);
         }
 
@@ -400,8 +400,8 @@ int computeHammingDistance(char *dataOne, char *dataTwo, int numberOfBytes){
     // A byte at a time to simplify the hamming weight calculation.
     for(int i=0; i<numberOfBytes; i++){
 
-        // XOR the byte which will return the bits that are unique to each data.
-        char *xorResult = xorDataBlock(dataOne + i, dataTwo + i, sizeof(char) * 2, (numberOfBytes * 2)); 
+        // XOR the bytes together which will return the bits that are unique to each byte.
+        char *xorResult = xorDataBlock(dataOne + i, dataTwo + i, 1, 1); 
         if(!xorResult){
             printf("Error: computeHammingDistance call to xorDataBlock failed.\n");
             return result;
