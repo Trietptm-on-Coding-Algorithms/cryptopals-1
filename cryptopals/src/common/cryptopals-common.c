@@ -277,7 +277,7 @@ char *xorDataBlock(char *data, char *xorKey, int numberOfBytes, int keyLength){
     }    
 
     // For each byte of the data, XOR it with the repeating key's next byte and append it to the result.
-    for(int i=0; i<(numberOfBytes + 1); i++){
+    for(int i=0; i<numberOfBytes; i++){
         unsigned char dataByte = data[i];
         unsigned char xorKeyByte = xorKey[i % keyLength];
         result[i] = dataByte ^ xorKeyByte;
