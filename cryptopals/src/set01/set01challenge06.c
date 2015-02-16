@@ -124,16 +124,15 @@ char *solveSet1Challenge06(char *fileName){
     int bytesWritten = 0;
     for(int i=0; i<numRows; i++){
         for(int j=0; j<numColumns; j++){
-
-            // Do not write more bytes than the original data represented
-            if(bytesWritten < base64DecodedDataSize){
-                *(result + bytesWritten) = (bytesWritten < base64DecodedDataSize) ? (decryptedBlocks[j]->message)[i] : '\0';
-            } else if (bytesWritten == base64DecodedDataSize) {
-                *(result + bytesWritten) = '\0';
+            if(bytesWritten <= base64DecodedDataSize){
+                *(result + bytesWritten) = (decryptedBlocks[j]->message)[i];
+                bytesWritten++;
             }
-            bytesWritten++;
-        }
-    }
+         }
+     }
+ 
+    result[bytesWritten - 2] = '\x00';
+//    }
 
     /* Free allocated memory */
     for(int i=0; i<numRows; i++){
