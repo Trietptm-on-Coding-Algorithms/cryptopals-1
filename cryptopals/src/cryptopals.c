@@ -36,6 +36,7 @@ int main(int argc, char **argv) {
     printf(" ------------------------ \n");
     xorDecryptedMessage *resultThree = solveSet1Challenge03(SET_1_CHALLENGE_3_INPUT_1);
     if(resultThree){
+        printf("Result Score: %f\n", resultThree->score);
         printf("Expected Key: %s\n", SET_1_CHALLENGE_3_EXPECTED_KEY);
         printf("Result Key:   %s\n", resultThree->key);
         printf("Expected Message: %s\n", SET_1_CHALLENGE_3_EXPECTED_MESSAGE);
@@ -52,6 +53,7 @@ int main(int argc, char **argv) {
     printf(" ------------------------ \n");
     xorDecryptedMessage *resultFour = solveSet1Challenge04(SET_1_CHALLENGE_4_INPUT_1);
     if(resultFour){
+        printf("Result Score: %f\n", resultFour->score);
         printf("Expected Key: %s\n", SET_1_CHALLENGE_4_EXPECTED_KEY);
         printf("Result Key:   %s\n", resultFour->key);
         printf("Expected Message: %s\n", SET_1_CHALLENGE_4_EXPECTED_MESSAGE);

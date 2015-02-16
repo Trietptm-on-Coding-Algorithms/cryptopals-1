@@ -16,7 +16,7 @@ static const char BASE64_ENCODING_VALUES[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgh
   * @param message The deciphered text found by XOR'ing the ciphertext with the key.
   */
 typedef struct {
-    int score;
+    double score;
     char *key;
     char *message;
 } xorDecryptedMessage;
@@ -100,10 +100,11 @@ char *decodeBase64(char *base64String);
   * @param data The block of data to XOR using the key.
   * @param xorKey The key to use when XOR'ing the dataBlock.
   * @param numberOfBytes The number of bytes to XOR.
+  * @param keyLength The number of bytes to use as the key.
   *
   * @return The data resulting from the XOR operation.
   */
-char *xorDataBlock(char *data, char *xorKey, int numberOfBytes);
+char *xorDataBlock(char *data, char *xorKey, int numberOfBytes, int keyLength);
 
 
 /**
@@ -146,6 +147,25 @@ void checkAllKeyCombinations(xorDecryptedMessage* result, char *data, int messag
   * @return The Hamming distance between the two blocks of data.
   */
 int computeHammingDistance(char *dataOne, char *dataTwo, int numberOfBytes);
+
+
+double getLetterScore(char letter);
+char **divideDataIntoBlocks(char *data, int numberOfBytes, int blockSize);
+
+/**
+  *                                                                   Column
+  *                   Column                                       ------------                         
+  *             ------------------                                | 1  2  3  4 |
+  *            | 1  2  3  4  5  6 |                           ----+------------|
+  *        ----+------------------|                           | 1 | A  G  M  S |
+  *     R  | 1 | A  B  C  D  E  F |                        R  | 2 | B  H  N  T |
+  *     o  | 2 | G  H  I  J  K  L |     -------------->    o  | 3 | C  I  O  U |
+  *     w  | 3 | M  N  O  P  Q  R |                        w  | 4 | D  J  P  V |
+  *     s  | 4 | S  T  U  V  W  X |                        s  | 2 | E  K  Q  W |
+  *         ----------------------                            | 3 | F  L  R  X |
+  *                                                            ----------------
+  */
+char **transposeBlocks(char **dataBlocks, int numRows, int numColumns);
 
 
 #endif

@@ -40,7 +40,7 @@ char *solveSet1Challenge02(char *hexStringOne, char *hexStringTwo) {
     }
 
     // XOR the data
-    char *xorResult = xorDataBlock(dataBlockOne, dataBlockTwo, strlen(hexStringOne));
+    char *xorResult = xorDataBlock(dataBlockOne, dataBlockTwo, (strlen(hexStringOne) / 2), (strlen(hexStringTwo) / 2));
     if(!xorResult){
         printf("Error: solveSet1Challenge02 unable to read memory into hex string.\n");
         free(dataBlockTwo);

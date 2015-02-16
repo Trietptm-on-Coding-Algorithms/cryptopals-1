@@ -251,18 +251,21 @@ char *decodeBase64(char *base64String){
 }
 
 
-char *xorDataBlock(char *data, char *xorKey, int numberOfBytes){
+char *xorDataBlock(char *data, char *xorKey, int numberOfBytes, int keyLength){
     char *result = NULL;
 
     // Check for invalid arguments.
     if (!data){
         printf("Error: xorDataBlock data input is NULL.\n");
         return result;        
-    } else if (!xorKey || strlen(xorKey) < 1){
-        printf("Error: xorDataBlock xorKey input is NULL or empty.\n");
+    } else if (!xorKey){
+        printf("Error: xorDataBlock xorKey input is NULL.\n");
         return result;
     } else if (numberOfBytes < 1){
         printf("Error: xorDataBlock numberOfBytes input is less than one.\n");
+        return result;
+    } else if (keyLength < 1){
+        printf("Error: xorDataBlock keyLength input is less than one.\n");
         return result;
     }
 
@@ -274,9 +277,9 @@ char *xorDataBlock(char *data, char *xorKey, int numberOfBytes){
     }    
 
     // For each byte of the data, XOR it with the repeating key's next byte and append it to the result.
-    for(int i=0; i<numberOfBytes/2; i++){
+    for(int i=0; i<numberOfBytes; i++){
         unsigned char dataByte = data[i];
-        unsigned char xorKeyByte = xorKey[i % strlen(xorKey)];
+        unsigned char xorKeyByte = xorKey[i % keyLength];
         result[i] = dataByte ^ xorKeyByte;
     }
 
@@ -351,7 +354,7 @@ void checkAllKeyCombinations(xorDecryptedMessage* result, char *data, int messag
         keyBuffer[keyLength] = '\0';
 
         // XOR the cipher string and our key string together and free the keyString.
-        char *xorResult = xorDataBlock(data, keyBuffer, ((messageLength * 2) + 1));
+        char *xorResult = xorDataBlock(data, keyBuffer, messageLength + 1, keyLength);
         if (!xorResult){
             printf("Error: checkAllKeyCombinations could not XOR datablocks.\n");
             return;
@@ -359,10 +362,8 @@ void checkAllKeyCombinations(xorDecryptedMessage* result, char *data, int messag
 
         // Count how many spaces and English alphabet ASCII characters are in the decoded string.
         int thisScore = 0;
-        for(int j=0; j<(messageLength * 2); j++){
-            if (('A' <= xorResult[j] && xorResult[j] <= 'z') || xorResult[j] == ' '){
-                thisScore++;
-            }
+        for(int j=0; j<messageLength; j++){
+            thisScore += getLetterScore(xorResult[j]);
         }
 
         // If this decrypted string scores higher than the previous best, save it and the key.
@@ -388,11 +389,8 @@ int computeHammingDistance(char *dataOne, char *dataTwo, int numberOfBytes){
     int result = 0;
 
     // Check for invalid arguments.
-    if (!dataOne || !dataTwo || strlen(dataOne) < 1 || strlen(dataTwo) < 1){
-        printf("Error: computeHammingDistance received null or empty arguments.\n");
-        return result;
-    } else if (strlen(dataOne) != strlen(dataTwo)){
-        printf("Error: computeHammingDistance arguments must be same length.\n");
+    if (!dataOne || !dataTwo){
+        printf("Error: computeHammingDistance received null arguments.\n");
         return result;
     } else if (numberOfBytes < 1){
         printf("Error: computeHammingDistance number of bytes less than one.\n");
@@ -402,8 +400,8 @@ int computeHammingDistance(char *dataOne, char *dataTwo, int numberOfBytes){
     // A byte at a time to simplify the hamming weight calculation.
     for(int i=0; i<numberOfBytes; i++){
 
-        // XOR the byte which will return the bits that are unique to each data.
-        char *xorResult = xorDataBlock(dataOne + i, dataTwo + i, sizeof(char) * 2); 
+        // XOR the bytes together which will return the bits that are unique to each byte.
+        char *xorResult = xorDataBlock(dataOne + i, dataTwo + i, 1, 1); 
         if(!xorResult){
             printf("Error: computeHammingDistance call to xorDataBlock failed.\n");
             return result;
@@ -423,3 +421,205 @@ int computeHammingDistance(char *dataOne, char *dataTwo, int numberOfBytes){
 }
 
 
+double getLetterScore(char letter){
+    double result = 0;
+
+    switch(letter){
+        case 'A':
+        case 'a':
+            result = 8.167;
+            break;
+
+        case 'B':
+        case 'b':
+            result += 1.492;
+            break;
+
+        case 'C':
+        case 'c':
+            result += 2.782;
+            break;
+
+        case 'D':
+        case 'd':
+            result += 4.253;
+            break;
+
+        case 'E':
+        case 'e':
+            result += 12.702;
+            break;
+
+        case 'F':
+        case 'f':
+            result += 2.228;
+            break;
+
+        case 'G':
+        case 'g':
+            result += 2.015;
+            break;
+
+        case 'H':
+        case 'h':
+            result += 6.094;
+            break;
+
+        case 'I':
+        case 'i':
+            result += 6.966;
+            break;
+
+        case 'J':
+        case 'j':
+            result += 0.153;
+            break;
+
+        case 'K':
+        case 'k':
+            result += 0.772;
+            break;
+
+        case 'L':
+        case 'l':
+            result += 4.025;
+            break;
+
+        case 'M':
+        case 'm':
+            result += 2.406;
+            break;
+
+        case 'N':
+        case 'n':
+            result += 6.749;
+            break;
+
+        case 'O':
+        case 'o':
+            result += 7.507;
+            break;
+
+        case 'P':
+        case 'p':
+            result += 1.929;
+            break;
+
+        case 'Q':
+        case 'q':
+            result += 0.095;
+            break;
+
+        case 'R':
+        case 'r':
+            result += 5.987;
+            break;
+
+        case 'S':
+        case 's':
+            result += 6.327;
+            break;
+
+        case 'T':
+        case 't':
+            result += 9.056;
+            break;
+
+        case 'U':
+        case 'u':
+            result += 2.758;
+            break;
+
+        case 'V':
+        case 'v':
+            result += 0.978;
+            break;
+
+        case 'W':
+        case 'w':
+            result += 2.360;
+            break;
+
+        case 'X':
+        case 'x':
+            result += 0.150;
+            break;
+
+        case 'Y':
+        case 'y':
+            result += 1.974;
+            break;
+
+        case 'Z':
+        case 'z':
+            result += 0.074;
+            break;
+
+        case '\0':
+        case ' ':
+        case '\n':
+        case ')':
+        case '(':
+        case ',':
+        case ':':
+        case ';':
+        case '.':
+        case '!':
+        case '?':
+        case '\'':
+        case '"':
+            result += 0.0;
+            break;
+
+        default:
+            result -= 50.0;
+            break;
+    }
+
+    return result;
+}
+
+
+char **divideDataIntoBlocks(char *data, int numberOfBytes, int blockSize){
+    char **result = NULL;
+
+    // Determine the number of blocks required
+    int numberOfBlocks = numberOfBytes / blockSize;
+    while(numberOfBytes > (numberOfBlocks * blockSize)){
+        numberOfBlocks++;
+    }
+
+    // Allocate memory for the result.
+    result = malloc(sizeof(char *) * numberOfBlocks);
+    for(int i=0; i<numberOfBlocks; i++){
+        result[i] = calloc(blockSize + 1, sizeof(char *));
+    }
+
+    // Copy the data into the blocks.
+    for(int i=0; i<numberOfBlocks; i++){
+        for(int j=0; j<blockSize; j++){
+            result[i][j] = (data + (blockSize * i))[j];
+        }
+    }
+    return result;
+}
+
+
+char **transposeBlocks(char **dataBlocks, int numColumns, int numRows){
+    char **result = NULL;
+
+    // Allocate memory for the result.
+    result = malloc(sizeof(char *) * numColumns);
+    for(int i=0; i<numColumns; i++){
+        result[i] = calloc(numRows + 1, sizeof(char *));
+    }
+
+    // Transpose.
+    for(int i=0; i<numColumns; i++){
+        for(int j=0; j<numRows; j++){
+            result[i][j] = dataBlocks[j][i];
+        }
+    }
+
+    return result;
+}
