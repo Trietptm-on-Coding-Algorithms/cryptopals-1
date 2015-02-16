@@ -88,5 +88,16 @@ int main(int argc, char **argv) {
         printf("Failed.\n\n");
     }
 
+    printf(" ------------------------ \n");
+    printf("| Set 01 :: Challenge 07 |\n");
+    printf(" ------------------------ \n");
+    char *resultSeven = solveSet1Challenge07(SET_1_CHALLENGE_7_INPUT_1, SET_1_CHALLENGE_7_INPUT_2);
+    if(resultSeven){
+        printf("Result Message:\n%s\n\n", resultSeven);
+        free(resultSeven);
+    } else {
+        printf("Failed.\n\n");
+    }
+
     return 0;
 }

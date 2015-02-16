@@ -1,3 +1,9 @@
+/**
+  * Matasano Crypto Challenge Solution
+  * Set: 01, Challenge 06: Break repeating-key XOR
+  *
+  * Coded by rot0x1a, 10 Feb 2015
+  */
 #include "set01challenge06.h"
 
 char *solveSet1Challenge06(char *fileName){

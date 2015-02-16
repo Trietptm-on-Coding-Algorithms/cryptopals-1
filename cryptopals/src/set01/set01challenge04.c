@@ -98,6 +98,7 @@ xorDecryptedMessage *solveSet1Challenge04(char *fileName) {
         currentEncryptedString = strtok(NULL, "\n");
     }
 
+    // Free resources we no longer need and return the result.
     munmap(fileMapping, fileSize);
     close(stringFileFD);
     return result;
