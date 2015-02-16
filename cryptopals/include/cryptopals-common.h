@@ -11,7 +11,7 @@ static const char BASE64_ENCODING_VALUES[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgh
 /**
   * A struct representing the result of an XOR decryption attempt.
   *
-  * @param score The score indicating the confidence of success. Based on English ASCII characters found.
+  * @param score The score based on English ASCII characters found.
   * @param key The string XOR'ed with the cipher text to arrive at this result.
   * @param message The deciphered text found by XOR'ing the ciphertext with the key.
   */
@@ -104,7 +104,7 @@ char *decodeBase64(char *base64String);
   *
   * @return The data resulting from the XOR operation.
   */
-char *xorDataBlock(char *data, char *xorKey, int numberOfBytes, int keyLength);
+char *xorDataBlock(char *data, int numberOfBytes, char *xorKey, int keyLength);
 
 
 /**
@@ -129,12 +129,12 @@ xorDecryptedMessage *xorDecrypt(char *data, int numberOfBytes, int keyLength);
   *
   * @param result A preallocated xorDecryptedMessage struct which will be populated with the top match of the decryption attempt.
   * @param data The data we will attempt to decrypt.
-  * @param messageLength The length of the message when decrypted.
+  * @param numberOfBytes The number of bytes the decrypted message contains.
+  * @param keyLength The length of the key to XOR the ciphertext with.
   * @param keyBuffer The allocated memory used to recursively iterate through all possible keys.
   * @param index The index in the keyBuffer this recursive call is looking at.
-  * @param keyLength The length of the key to XOR the ciphertext with.
   */
-void checkAllKeyCombinations(xorDecryptedMessage* result, char *data, int messageLength, char *keyBuffer, int index, int keyLength);
+void checkAllKeyCombinations(xorDecryptedMessage* result, char *data, int numberOfBytes, int keyLength, char *keyBuffer, int index);
 
 
 /**
@@ -149,11 +149,53 @@ void checkAllKeyCombinations(xorDecryptedMessage* result, char *data, int messag
 int computeHammingDistance(char *dataOne, char *dataTwo, int numberOfBytes);
 
 
+/**
+  * Given a char, return a score based on it's frequency in the English alphabet.
+  *
+  * Punctuation, spaces, newlines, and NULL terminators receive no score.
+  * Non-English characters receive a negative score.
+  *
+  * @param char The character whose score we want to retrieve.
+  *
+  * @return The frequency score of the char provided.
+  */
 double getLetterScore(char letter);
-int determineKeySize(char *data, int numberOfBytes, int maxKeySize);
-char **divideDataIntoBlocks(char *data, int numberOfBytes, int blockSize);
+
 
 /**
+  * Given a block of data, the number of bytes to look at, and the maximum key size allowed,
+  * find the average hamming distance between blocks of various keysizes.
+  *
+  * The key size that results in the lowest normalized hamming distance is likely to be the
+  * key size and that is what is returned.
+  *
+  * @param data The data to determine the key size for.
+  * @param numberOfBytes The number of bytes represented by the data.
+  * @param maxKeySize The maximum key size we will try to find. 
+  *
+  * @return The key size resulting in the lowest normalized hamming distance.
+  */
+int determineKeySize(char *data, int numberOfBytes, int maxKeySize);
+
+
+/**
+  * Given a block of data, the number of bytes to look at, and the desired block size,
+  * divide the original data into an array of blockSize data blocks.
+  *
+  * @param data The data to divide into blocks.
+  * @param numberOfBytes The number of bytes represented by the data.
+  * @param blockSize The blocksize the data will be divided into.
+  *
+  * @return The array of blockSize blocks containing the original data.
+  */
+char **divideDataIntoBlocks(char *data, int numberOfBytes, int blockSize);
+
+
+/**
+  * Given an array of blocks of data, transpose the blocks such that the number
+  * of rows becomes the number of colums, and the number of columns is now
+  * the number of rows.
+  *
   *                                                                   Column
   *                   Column                                       ------------                         
   *             ------------------                                | 1  2  3  4 |
@@ -165,8 +207,12 @@ char **divideDataIntoBlocks(char *data, int numberOfBytes, int blockSize);
   *     s  | 4 | S  T  U  V  W  X |                        s  | 2 | E  K  Q  W |
   *         ----------------------                            | 3 | F  L  R  X |
   *                                                            ----------------
+  * @param dataBlocks The array of data to transpose.
+  * @param numRows The number of rows the dataBlocks contains.
+  * @param numColumns The number of columns the dataBlocks contains.
+  *
+  * @return The array of transposed data.
   */
 char **transposeBlocks(char **dataBlocks, int numRows, int numColumns);
-
 
 #endif

@@ -19,7 +19,7 @@ char *solveSet1Challenge05(char *message, char *key){
     }
 
     // XOR the data.
-    char *xorResult = xorDataBlock(message, key, strlen(message), strlen(key));
+    char *xorResult = xorDataBlock(message, strlen(message), key, strlen(key));
     if(!xorResult){
         printf("Error: solveSet1Challenge05 could not XOR the message.\n");
         return result;

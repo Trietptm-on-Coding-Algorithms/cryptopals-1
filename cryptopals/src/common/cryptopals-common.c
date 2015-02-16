@@ -251,7 +251,7 @@ char *decodeBase64(char *base64String){
 }
 
 
-char *xorDataBlock(char *data, char *xorKey, int numberOfBytes, int keyLength){
+char *xorDataBlock(char *data, int numberOfBytes, char *xorKey, int keyLength){
     char *result = NULL;
 
     // Check for invalid arguments.
@@ -340,7 +340,7 @@ xorDecryptedMessage *xorDecrypt(char *data, int numberOfBytes, int keyLength){
     }
 
     // Check all combinations of common ASCII s the key.
-    checkAllKeyCombinations(result, data, numberOfBytes, keyBuffer, 0, keyLength);
+    checkAllKeyCombinations(result, data, numberOfBytes, keyLength, keyBuffer, 0);
 
     // Clean up and return.
     free(keyBuffer);
@@ -348,13 +348,13 @@ xorDecryptedMessage *xorDecrypt(char *data, int numberOfBytes, int keyLength){
 }
 
 
-void checkAllKeyCombinations(xorDecryptedMessage* result, char *data, int messageLength, char *keyBuffer, int index, int keyLength){
+void checkAllKeyCombinations(xorDecryptedMessage* result, char *data, int numberOfBytes, int keyLength, char *keyBuffer, int index){
     // If the key is the desired length, try to decrypt and return.
     if (index >= keyLength){
         keyBuffer[keyLength] = '\0';
 
         // XOR the cipher string and our key string together and free the keyString.
-        char *xorResult = xorDataBlock(data, keyBuffer, messageLength + 1, keyLength);
+        char *xorResult = xorDataBlock(data, numberOfBytes, keyBuffer, keyLength);
         if (!xorResult){
             printf("Error: checkAllKeyCombinations could not XOR datablocks.\n");
             return;
@@ -362,7 +362,7 @@ void checkAllKeyCombinations(xorDecryptedMessage* result, char *data, int messag
 
         // Count how many spaces and English alphabet ASCII characters are in the decoded string.
         int thisScore = 0;
-        for(int j=0; j<messageLength; j++){
+        for(int j=0; j<numberOfBytes; j++){
             thisScore += getLetterScore(xorResult[j]);
         }
 
@@ -370,7 +370,7 @@ void checkAllKeyCombinations(xorDecryptedMessage* result, char *data, int messag
         if (thisScore > result->score){
             result->score = thisScore;
             strncpy(result->key, keyBuffer, keyLength);
-            strncpy(result->message, (const char *)xorResult, messageLength);
+            strncpy(result->message, (const char *)xorResult, numberOfBytes);
         }
         free(xorResult);
         return;
@@ -379,7 +379,7 @@ void checkAllKeyCombinations(xorDecryptedMessage* result, char *data, int messag
     } else {
         for (char i=' '; i<='}'; i++){
             keyBuffer[index] = i;
-            checkAllKeyCombinations(result, data, messageLength, keyBuffer, index + 1, keyLength);
+            checkAllKeyCombinations(result, data, numberOfBytes, keyLength, keyBuffer, index + 1);
         }
     }
 }
@@ -401,7 +401,7 @@ int computeHammingDistance(char *dataOne, char *dataTwo, int numberOfBytes){
     for(int i=0; i<numberOfBytes; i++){
 
         // XOR the bytes together which will return the bits that are unique to each byte.
-        char *xorResult = xorDataBlock(dataOne + i, dataTwo + i, 1, 1); 
+        char *xorResult = xorDataBlock(dataOne + i, 1, dataTwo + i, 1); 
         if(!xorResult){
             printf("Error: computeHammingDistance call to xorDataBlock failed.\n");
             return result;
