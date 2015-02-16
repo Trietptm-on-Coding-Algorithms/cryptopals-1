@@ -29,6 +29,8 @@ xorDecryptedMessage *solveSet1Challenge06(char *fileName){
         return result;
     }
 
+    int base64DecodedDataSize =  (strlen(fileMapping) / 4) * 3;
+
     // Load the base64 encoded data into memory.
     char *base64DecodedData = decodeBase64(fileMapping);
     if (!base64DecodedData){
@@ -49,15 +51,41 @@ xorDecryptedMessage *solveSet1Challenge06(char *fileName){
 		exit(-1);
 	}
 
-	for(int i=2; i<40; i++){
-		int hamming = computeHammingDistance(base64DecodedData, base64DecodedData + i, i);
-		printf("keySize: %d, hamming: %d, normalized=%d\n", i, hamming, hamming/i);
+
+	int maxKeySize = 40;
+	float hammingAverages[maxKeySize];
+	for(int i=0; i<maxKeySize; i++){
+		hammingAverages[i] = 0.0;
 	}
+
+	// Take as many samples as we can
+	int numSamples = (base64DecodedDataSize - maxKeySize) / 2;
+	for(int i=0; i<numSamples; i++){
+
+		// Add the normalized samples together:
+		for(int j=2; j<maxKeySize; j++){
+			char *dataStart = base64DecodedData + i;
+			int hammingDistance = computeHammingDistance(dataStart, dataStart + j, j);
+			float normalized = (float)hammingDistance / (float)j;
+			hammingAverages[j] += normalized;
+		}
+
+	}
+
+	int keySize = -1;
+	int lowestNormalized = -1;
+	for(int i =2; i<maxKeySize; i++){
+		hammingAverages[i] /= numSamples;
+		if(lowestNormalized < 0 || hammingAverages[i] < lowestNormalized){
+			keySize = i;
+			lowestNormalized = hammingAverages[i];
+		}
+	}
+ 	printf("numSamples: %d\n", numSamples);
+	printf("keySize: %d\n", keySize);
+	printf("normalized=%f\n", hammingAverages[keySize]);
  	printf("\n");
 
- 	// Known result, need to calculate on our own.
-    int keySize = 29;
-    int base64DecodedDataSize =  (strlen(fileMapping) / 4) * 3;
 
     // Divide the data into blocks and transpose them.
     int numColumns = keySize;
