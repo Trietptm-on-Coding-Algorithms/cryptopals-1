@@ -660,3 +660,32 @@ int determineKeySize(char *data, int numberOfBytes, int maxKeySize){
     
     return result;
 }
+
+
+char *pkcs7(char *data, int numberOfBytes, int desiredLength){
+    char *result = NULL;
+
+    // Check for invalid arguments.
+    if(numberOfBytes < 1) {
+        printf("Error: pkcs7 numberOfBytes less than one.\n");
+        return result;
+    } else if (desiredLength < 1){
+        printf("Error: pkcs7 desiredLength less than one.\n");
+        return result;
+    } 
+
+    result = calloc(desiredLength, sizeof(char));
+    if(!result){
+        printf("Error: xorDecrypt could not allocate memory for result message.\n");
+        return result;
+    }
+
+//    int paddingSize = desiredLength - numberOfBytes;
+    char paddingByte = desiredLength - numberOfBytes;
+    strncpy(result, data, numberOfBytes);
+    for(int i=numberOfBytes; i<desiredLength; i++){
+        result[i] = paddingByte;
+    }
+
+    return result;      
+}

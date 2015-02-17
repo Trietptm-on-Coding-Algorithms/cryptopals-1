@@ -1,5 +1,5 @@
-#ifndef S1C01_H
-#define S1C01_H
+#ifndef SET01_H
+#define SET01_H
 
 #include "cryptopals-common.h"
 #include <fcntl.h>

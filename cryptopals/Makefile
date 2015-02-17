@@ -6,7 +6,7 @@ INCLUDE_FOLDER = include
 COMMON_SRC_FOLDER = src/common
 SETS_SRC_FOLDER = src/sets
 
-CRYPTOPALS_OBJECTS = lib/${PROGRAM_NAME}-common.o lib/set01.o
+CRYPTOPALS_OBJECTS = lib/${PROGRAM_NAME}-common.o lib/set01.o  lib/set02.o
 CRYPTOPALS_LIB = lib/${PROGRAM_NAME}.a
 
 CRYPTOPALS_DEPENDENCIES = ${CRYPTOPALS_LIB} -lssl -lcrypto
@@ -25,11 +25,14 @@ ${PROGRAM_NAME}-common: dirs ${COMMON_SRC_FOLDER}/${PROGRAM_NAME}-common.c
 
 
 ############ Set 1 library and individual solutions. ############
-sets: set01
+sets: set01 set02
 	ar vrs lib/${PROGRAM_NAME}.a ${CRYPTOPALS_OBJECTS}
 
 set01: dirs ${PROGRAM_NAME}-common
 	${CC_CMD} -c ${SETS_SRC_FOLDER}/set01.c -o lib/set01.o
+
+set02: dirs ${PROGRAM_NAME}-common
+	${CC_CMD} -c ${SETS_SRC_FOLDER}/set02.c -o lib/set02.o
 
 
 ########################### grunt work ###########################

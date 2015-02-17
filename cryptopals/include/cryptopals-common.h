@@ -215,4 +215,15 @@ char **divideDataIntoBlocks(char *data, int numberOfBytes, int blockSize);
   */
 char **transposeBlocks(char **dataBlocks, int numRows, int numColumns);
 
+
+/**
+  * Given a block of data, the size of the data, and the desired size
+  *
+  * @param data The data to divide into blocks.
+  * @param numberOfBytes The number of bytes represented by the data.
+  * @param desiredNumberOfBytes The blocksize the data will be divided into.
+  *
+  * @return The data padded to the desired length with PKCS7 padding.
+  */
+char *pkcs7(char *data, int numberOfBytes, int desiredNumberOfBytes);
 #endif
