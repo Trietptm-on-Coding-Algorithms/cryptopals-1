@@ -829,7 +829,7 @@ void aesCheck(char *data, char *key, char *answer){
   }
   printf("\n");
 
-  printf("Plaintext: %s", decrypted);
+  printf("Plaintext: %s", (char *)decrypted);
   printf("\n\n");
 }
 

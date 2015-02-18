@@ -27,3 +27,19 @@ char *solveSet2Challenge01(char *data, int desiredLength){
 
     return result;
 }
+
+
+
+/**
+  * Matasano Crypto Challenge Solution
+  * Set: 02, Challenge 02:  Implement CBC Mode
+  *
+  * Coded by rot0x1a, 18 Feb 2015
+  */
+char *solveSet2Challenge02(char *data, int desiredLength){
+  char *result = NULL;
+
+  aesCheck("banana", "YELLOW SUBMARINE", "b931b6289f92cf02f33f17ed44674ae5");
+
+  return result;
+}

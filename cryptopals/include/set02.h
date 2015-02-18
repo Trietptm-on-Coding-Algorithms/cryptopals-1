@@ -4,5 +4,5 @@
 #include "cryptopals-common.h"
 
 char *solveSet2Challenge01(char *data, int desiredLength);
-
+char *solveSet2Challenge02(char *data, int desiredLength);
 #endif
