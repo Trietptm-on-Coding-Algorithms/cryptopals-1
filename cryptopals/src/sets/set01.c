@@ -506,31 +506,17 @@ char *solveSet1Challenge07(char *fileName, char *key){
     }
     int base64DecodedDataSize = (strlen(fileMapping) / 4) * 3;
 
-    // Prepare for decryption.
-    unsigned char *aesOut = calloc(base64DecodedDataSize, sizeof(char));
-    const unsigned char *aesIn = (const unsigned char *)base64DecodedData;
-    AES_KEY aesKey;
-    AES_set_decrypt_key((const unsigned char *)key, strlen(key) * 8, &aesKey);
-
-    // Decrypt the 16 bit blocks.
-    int count = 0;
-    while (count < base64DecodedDataSize){
-        AES_ecb_encrypt(aesIn + count, aesOut + count, (const AES_KEY *)&aesKey, AES_DECRYPT);
-        count += strlen(key);
+    // Decrypt
+    result = aesDecryptECB(base64DecodedData, base64DecodedDataSize, key, strlen(key));
+    if (!result){
+        printf("Error: solveSet1Challenge06 failed to decrypt data.\n");
+        free(base64DecodedData);
+        close(stringFileFD);
+        munmap(fileMapping, fileSize);
+        return result;      
     }
-
-    // Strip PKCS7 padding.
-    int paddingLength = aesOut[count - 1];
-    for(int i=1; i<=paddingLength; i++){
-        aesOut[count-i] = '\0';
-    }
-
-    // Copy the output to our result.
-    result = calloc(base64DecodedDataSize + 1, sizeof(char));
-    strncpy(result, (char *)aesOut, base64DecodedDataSize);
 
     // Free resources we no longer need and return the result.
-    free(aesOut);
     free(base64DecodedData);
     close(stringFileFD);
     munmap(fileMapping, fileSize);

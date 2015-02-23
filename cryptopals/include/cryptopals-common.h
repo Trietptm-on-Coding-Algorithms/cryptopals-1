@@ -1,10 +1,15 @@
 #ifndef CRYPTOPALS_COMMON_H
 #define CRYPTOPALS_COMMON_H
 
+#include <openssl/aes.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif 
 
 static const char BASE64_ENCODING_VALUES[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
@@ -226,4 +231,12 @@ char **transposeBlocks(char **dataBlocks, int numRows, int numColumns);
   * @return The data padded to the desired length with PKCS7 padding.
   */
 char *pkcs7(char *data, int numberOfBytes, int desiredNumberOfBytes);
+
+
+void *aesDecryptECB(void *data, int dataLength, void *key, int keyLength);
+void *aesEncryptECB(void *data, int dataLength, void *key, int keyLength);
+void *aesDecryptCBC(void *data, int dataLength, void *key, int keyLength);
+void *aesEncryptCBC(void *data, int dataLength, void *key, int keyLength);
+void aesCheck(char *data, char *key, char *answer);
+
 #endif

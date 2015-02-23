@@ -130,9 +130,20 @@ int main(int argc, char **argv) {
                 printf("\\x%02x", setTwoChallengeOneResult[i]);
             }
         }
-        printf("\n");
+        printf("\n\n");
 
         free(setTwoChallengeOneResult);
+    } else {
+        printf("Failed.\n\n");
+    }
+
+    printf(" ------------------------ \n");
+    printf("| Set 02 ::Challenge 02] |\n");
+    printf(" ------------------------ \n");
+    char *setTwoChallengeTwoResult = solveSet2Challenge02(SET_2_CHALLENGE_2_INPUT_1);
+    if(setTwoChallengeTwoResult){
+        printf("setTwoChallengeTwoResult:\n%s\n", setTwoChallengeTwoResult);
+        free(setTwoChallengeTwoResult);
     } else {
         printf("Failed.\n\n");
     }

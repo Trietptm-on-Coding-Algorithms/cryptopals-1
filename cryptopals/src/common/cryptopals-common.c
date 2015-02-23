@@ -258,15 +258,15 @@ char *xorDataBlock(char *data, int numberOfBytes, char *xorKey, int keyLength){
     if (!data){
         printf("Error: xorDataBlock data input is NULL.\n");
         return result;        
-    } else if (!xorKey){
-        printf("Error: xorDataBlock xorKey input is NULL.\n");
-        return result;
-    } else if (numberOfBytes < 1){
-        printf("Error: xorDataBlock numberOfBytes input is less than one.\n");
-        return result;
-    } else if (keyLength < 1){
-        printf("Error: xorDataBlock keyLength input is less than one.\n");
-        return result;
+     } else if (!xorKey){
+         printf("Error: xorDataBlock xorKey input is NULL.\n");
+         return result;
+     } else if (numberOfBytes < 1){
+         printf("Error: xorDataBlock numberOfBytes input is less than one.\n");
+         return result;
+     } else if (keyLength < 1){
+         printf("Error: xorDataBlock keyLength input is less than one.\n");
+         return result;
     }
 
     // Obtain memory to store the result.
@@ -676,11 +676,10 @@ char *pkcs7(char *data, int numberOfBytes, int desiredLength){
 
     result = calloc(desiredLength, sizeof(char));
     if(!result){
-        printf("Error: xorDecrypt could not allocate memory for result message.\n");
+        printf("Error: pkcs7 could not allocate memory for result message.\n");
         return result;
     }
 
-//    int paddingSize = desiredLength - numberOfBytes;
     char paddingByte = desiredLength - numberOfBytes;
     strncpy(result, data, numberOfBytes);
     for(int i=numberOfBytes; i<desiredLength; i++){
@@ -689,3 +688,215 @@ char *pkcs7(char *data, int numberOfBytes, int desiredLength){
 
     return result;      
 }
+
+
+void *stripPKCS7(void *data, int dataLength){
+    void *result;
+
+    //Allocate memory
+    result = calloc(dataLength + 1, sizeof(char));
+
+    // Strip PKCS7 padding.
+    int paddingLength = ((unsigned char *)data)[dataLength - 1];
+    strncpy(result, data, dataLength - paddingLength);
+
+    // Return the result.
+    return result;    
+}
+
+
+void *aesEncryptECB(void *data, int dataLength, void *key, int keyLength){
+    void *result = NULL;
+
+    // Check for invalid arguments.
+    if (!data){
+        printf("Error: aesEncryptECB data input is NULL.\n");
+        return result;        
+    } else if (!key){
+        printf("Error: aesEncryptECB key input is NULL.\n");
+        return result;
+    } else if (dataLength < 1){
+        printf("Error: aesEncryptECB dataLength input is less than one.\n");
+        return result;
+    } else if (keyLength < 1){
+        printf("Error: aesEncryptECB keyLength input is less than one.\n");
+        return result;
+    }
+
+    // Allocate memory for the result.
+    result = calloc(dataLength, sizeof(char));
+    if (!result){
+        printf("Error: aesEncryptBlock could not allocate memory for result message.\n");
+        return result;
+    }
+
+    // Prepare for decryption.
+    AES_KEY aesKey;
+    AES_set_encrypt_key((const unsigned char *)key, keyLength * 8, &aesKey);
+    unsigned int paddingLength = 16 - (dataLength % 16);
+    void *paddedPlaintext = pkcs7(data, dataLength, dataLength + paddingLength);
+    const unsigned char *aesIn = (const unsigned char *)paddedPlaintext;
+
+    // Encrypt the 16 bit blocks.
+    int count = 0;
+    while (count < dataLength){
+        AES_ecb_encrypt(aesIn + count, (unsigned char *)result + count, (const AES_KEY *)&aesKey, AES_ENCRYPT);
+        count += AES_BLOCK_SIZE;
+    }
+
+    // Clean up and return.
+    free(paddedPlaintext);
+    return result;
+}
+
+
+void *aesDecryptECB(void *data, int dataLength, void *key, int keyLength){
+    void *result = NULL;
+
+    // Check for invalid arguments.
+    if (!data){
+        printf("Error: aesDecryptECB data input is NULL.\n");
+        return result;        
+    } else if (!key){
+        printf("Error: aesDecryptECB key input is NULL.\n");
+        return result;
+    } else if (dataLength < 1){
+        printf("Error: aesDecryptECB dataLength input is less than one.\n");
+        return result;
+    } else if (keyLength < 1){
+        printf("Error: aesDecryptECB keyLength input is less than one.\n");
+        return result;
+    }
+
+    // Allocate memory for the result.
+    void *decrypted = calloc(dataLength + 1, sizeof(char));
+    if (!decrypted){
+        printf("Error: aesDecryptECB could not allocate memory for decrypted message.\n");
+        return result;
+    }
+
+    // Prepare for decryption.
+    AES_KEY aesKey;
+    AES_set_decrypt_key((const unsigned char *)key, keyLength * 8, &aesKey);
+    const unsigned char *aesIn = data;
+
+    // Decrypt the 16 bit blocks.
+    int count = 0;
+    while (count < dataLength){
+        AES_ecb_encrypt(aesIn, (unsigned char *)decrypted, (const AES_KEY *)&aesKey, AES_DECRYPT);
+        count += AES_BLOCK_SIZE;
+    }
+
+    result = stripPKCS7(decrypted, dataLength);
+
+    free(decrypted);
+    return result;
+}
+
+
+void *aesDecryptCBC(void *data, int dataLength, void *key, int keyLength){
+    void *result = NULL;
+
+    // Check for invalid arguments.
+    if (!data){
+        printf("Error: aesDecryptCBC data input is NULL.\n");
+        return result;        
+    } else if (!key){
+        printf("Error: aesDecryptCBC key input is NULL.\n");
+        return result;
+    } else if (dataLength < 1){
+        printf("Error: aesDecryptCBC dataLength input is less than one.\n");
+        return result;
+    } else if (keyLength < 1){
+        printf("Error: aesDecryptCBC keyLength input is less than one.\n");
+        return result;
+    }
+
+    // Allocate memory for the result.
+    void *decrypted = calloc(dataLength + 1, sizeof(char));
+    if (!decrypted){
+        printf("Error: aesDecryptCBC could not allocate memory for decrypted message.\n");
+        return result;
+    }
+
+    // Allocate memory for the result.
+    char *xorDecrypted = calloc(dataLength + 1, sizeof(char));
+    if (!xorDecrypted){
+        printf("Error: aesDecryptCBC could not allocate memory for xorDecrypted.\n");
+        return result;
+    }
+
+    // Prepare for decryption.
+    AES_KEY aesKey;
+    AES_set_decrypt_key((const unsigned char *)key, keyLength * 8, &aesKey);
+
+    int numBlocks = dataLength / 16;
+    for(int i=0; i<numBlocks; i++){
+
+        int offset = 16 * i;
+        char *iv = (i == 0) ? "\0\0\0\0\0\0\0\0" : data + (offset - 16);
+        const unsigned char *aesIn = (const unsigned char *)data + offset;
+        AES_ecb_encrypt(aesIn, (unsigned char *)(decrypted + offset), (const AES_KEY *)&aesKey, AES_DECRYPT);
+        char *cbcBlock = (i == 0) ? (char *)decrypted : (char *)xorDataBlock((char *)decrypted + offset, 16, iv, 16);
+        strncpy(xorDecrypted + offset, cbcBlock, strlen(cbcBlock));
+        
+        if(i != 0){            
+            free(cbcBlock);
+        }
+    }
+
+    result = stripPKCS7(xorDecrypted, dataLength);
+    free(decrypted);
+    free(xorDecrypted);
+    return result;
+}
+
+
+void *aesEncryptCBC(void *data, int dataLength, void *key, int keyLength) {
+    printf("aesEncryptCBC not yet implemented......\n");
+    return NULL;
+}
+
+
+void aesCheck(char *data, char *key, char *answer){
+  int plaintextLength = strlen(data);
+  int paddingLength = 16 - (plaintextLength % 16);
+  int encryptedLength = plaintextLength + paddingLength;
+
+  void *aesIn = data;
+  int dataLength = plaintextLength;
+  void *aesKey = key;
+  int keyLength = strlen(key);
+
+  void *encrypted = aesEncryptECB(aesIn, dataLength, aesKey, keyLength);
+  void *decrypted = aesDecryptECB(encrypted, encryptedLength, aesKey, keyLength);
+
+  printf("Original : %s\n", data);
+
+  printf("Hex      : ");
+  for(int i=0; i<plaintextLength; i++){
+    printf("%02x", ((unsigned char *)data)[i]);
+  }
+  printf("\n");
+
+  printf("Encrypted: ");
+  for(int i=0; i<encryptedLength; i++){
+    printf("%02x", ((unsigned char *)encrypted)[i]);
+  }
+  printf("\n");
+
+  printf("Expected : %s\n", answer);
+
+  printf("Decrypted: ");
+  for(int i=0; i<encryptedLength; i++){
+    printf("%02x", ((unsigned char *)decrypted)[i]);
+  }
+  printf("\n");
+
+  printf("Plaintext: %s", (char *)decrypted);
+  printf("\n\n");
+}
+
+
+
+
