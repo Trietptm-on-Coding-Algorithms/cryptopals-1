@@ -140,12 +140,9 @@ int main(int argc, char **argv) {
     printf(" ------------------------ \n");
     printf("| Set 02 ::Challenge 02] |\n");
     printf(" ------------------------ \n");
-    char *setTwoChallengeTwoResult = solveSet2Challenge02(SET_2_CHALLENGE_1_INPUT_1, SET_2_CHALLENGE_1_INPUT_2);
+    char *setTwoChallengeTwoResult = solveSet2Challenge02(SET_2_CHALLENGE_2_INPUT_1);
     if(setTwoChallengeTwoResult){
-        printf("Expected:              %s\n", SET_2_CHALLENGE_1_EXPECTED_OUTPUT);
-        printf("setOneChallengeResult: ");
-        printf("\n");
-
+        printf("setTwoChallengeTwoResult:\n%s\n", setTwoChallengeTwoResult);
         free(setTwoChallengeTwoResult);
     } else {
         printf("Failed.\n\n");

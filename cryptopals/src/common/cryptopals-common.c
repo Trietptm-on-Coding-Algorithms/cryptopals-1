@@ -258,15 +258,15 @@ char *xorDataBlock(char *data, int numberOfBytes, char *xorKey, int keyLength){
     if (!data){
         printf("Error: xorDataBlock data input is NULL.\n");
         return result;        
-    } else if (!xorKey){
-        printf("Error: xorDataBlock xorKey input is NULL.\n");
-        return result;
-    } else if (numberOfBytes < 1){
-        printf("Error: xorDataBlock numberOfBytes input is less than one.\n");
-        return result;
-    } else if (keyLength < 1){
-        printf("Error: xorDataBlock keyLength input is less than one.\n");
-        return result;
+     } else if (!xorKey){
+         printf("Error: xorDataBlock xorKey input is NULL.\n");
+         return result;
+     } else if (numberOfBytes < 1){
+         printf("Error: xorDataBlock numberOfBytes input is less than one.\n");
+         return result;
+     } else if (keyLength < 1){
+         printf("Error: xorDataBlock keyLength input is less than one.\n");
+         return result;
     }
 
     // Obtain memory to store the result.
@@ -791,6 +791,70 @@ void *aesDecryptECB(void *data, int dataLength, void *key, int keyLength){
 
     free(decrypted);
     return result;
+}
+
+
+void *aesDecryptCBC(void *data, int dataLength, void *key, int keyLength){
+    void *result = NULL;
+
+    // Check for invalid arguments.
+    if (!data){
+        printf("Error: aesDecryptCBC data input is NULL.\n");
+        return result;        
+    } else if (!key){
+        printf("Error: aesDecryptCBC key input is NULL.\n");
+        return result;
+    } else if (dataLength < 1){
+        printf("Error: aesDecryptCBC dataLength input is less than one.\n");
+        return result;
+    } else if (keyLength < 1){
+        printf("Error: aesDecryptCBC keyLength input is less than one.\n");
+        return result;
+    }
+
+    // Allocate memory for the result.
+    void *decrypted = calloc(dataLength + 1, sizeof(char));
+    if (!decrypted){
+        printf("Error: aesDecryptCBC could not allocate memory for decrypted message.\n");
+        return result;
+    }
+
+    // Allocate memory for the result.
+    char *xorDecrypted = calloc(dataLength + 1, sizeof(char));
+    if (!xorDecrypted){
+        printf("Error: aesDecryptCBC could not allocate memory for xorDecrypted.\n");
+        return result;
+    }
+
+    // Prepare for decryption.
+    AES_KEY aesKey;
+    AES_set_decrypt_key((const unsigned char *)key, keyLength * 8, &aesKey);
+
+    int numBlocks = dataLength / 16;
+    for(int i=0; i<numBlocks; i++){
+
+        int offset = 16 * i;
+        char *iv = (i == 0) ? "\0\0\0\0\0\0\0\0" : data + (offset - 16);
+        const unsigned char *aesIn = (const unsigned char *)data + offset;
+        AES_ecb_encrypt(aesIn, (unsigned char *)(decrypted + offset), (const AES_KEY *)&aesKey, AES_DECRYPT);
+        char *cbcBlock = (i == 0) ? (char *)decrypted : (char *)xorDataBlock((char *)decrypted + offset, 16, iv, 16);
+        strncpy(xorDecrypted + offset, cbcBlock, strlen(cbcBlock));
+        
+        if(i != 0){            
+            free(cbcBlock);
+        }
+    }
+
+    result = stripPKCS7(xorDecrypted, dataLength);
+    free(decrypted);
+    free(xorDecrypted);
+    return result;
+}
+
+
+void *aesEncryptCBC(void *data, int dataLength, void *key, int keyLength) {
+    printf("aesEncryptCBC not yet implemented......\n");
+    return NULL;
 }
 
 

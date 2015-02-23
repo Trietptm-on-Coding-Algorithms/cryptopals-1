@@ -235,6 +235,8 @@ char *pkcs7(char *data, int numberOfBytes, int desiredNumberOfBytes);
 
 void *aesDecryptECB(void *data, int dataLength, void *key, int keyLength);
 void *aesEncryptECB(void *data, int dataLength, void *key, int keyLength);
+void *aesDecryptCBC(void *data, int dataLength, void *key, int keyLength);
+void *aesEncryptCBC(void *data, int dataLength, void *key, int keyLength);
 void aesCheck(char *data, char *key, char *answer);
 
 #endif
