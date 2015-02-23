@@ -23,8 +23,8 @@ This readme will keep you posted on my progress.
 | Challenge                                   | Date Completed |
 | :------------------------------------------ | -------------: |
 | 1: Implement PKCS#7 padding                 |    17 Feb 2015 |
-| 2: Implement CBC mode                       |    IN PROGRESS |
-| 3: An ECB/CBC detection oracle              |                |
+| 2: Implement CBC mode                       |    23 Feb 2015 |
+| 3: An ECB/CBC detection oracle              |    IN PROGRESS |
 | 4: Byte-at-a-time ECB decryption (Simple)   |                |
 | 5: ECB cut-and-paste                        |                |
 | 6: Byte-at-a-time ECB decryption (Harder)   |                |
