@@ -783,7 +783,7 @@ void *aesDecryptECB(void *data, int dataLength, void *key, int keyLength){
     // Decrypt the 16 bit blocks.
     int count = 0;
     while (count < dataLength){
-        AES_ecb_encrypt(aesIn, (unsigned char *)decrypted, (const AES_KEY *)&aesKey, AES_DECRYPT);
+        AES_ecb_encrypt(aesIn + count, (unsigned char *)decrypted + count, (const AES_KEY *)&aesKey, AES_DECRYPT);
         count += AES_BLOCK_SIZE;
     }
 
