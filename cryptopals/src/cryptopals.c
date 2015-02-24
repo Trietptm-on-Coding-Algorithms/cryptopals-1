@@ -592,7 +592,7 @@ void setOneChallengeFour(){
     }
     strncpy(challengeFourInput, SET_1_CHALLENGE_4_INPUT_1, strlen(SET_1_CHALLENGE_4_INPUT_1));
 
-    printSetOneChallengeThreeMenu();
+    printSetOneChallengeFourMenu();
     char input = 0;
     while (input != '0'){
         while (input < '0' || input > '2'){
