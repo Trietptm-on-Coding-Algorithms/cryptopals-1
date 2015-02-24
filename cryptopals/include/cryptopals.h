@@ -1,9 +1,26 @@
 #ifndef CRYPTOPALS_H
 #define CRYPTOPALS_H
 
+#include <stdio.h>
 #include "cryptopals-common.h"
 #include "set01.h"
 #include "set02.h"
+
+void mainMenu();
+
+void setOneMenu();
+void setOneChallengeOne();
+void setOneChallengeTwo();
+void setOneChallengeThree();
+void setOneChallengeFour();
+void setOneChallengeFive();
+void setOneChallengeSix();
+void setOneChallengeSeven();
+void setOneChallengeEight();
+
+void setTwoMenu();
+void setTwoChallengeOne();
+void setTwoChallengeTwo();
 
 #define SET_1_CHALLENGE_1_INPUT_1 "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d"
 #define SET_1_CHALLENGE_1_EXPECTED_OUTPUT "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t"
