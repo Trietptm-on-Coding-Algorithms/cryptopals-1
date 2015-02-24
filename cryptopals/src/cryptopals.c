@@ -8,8 +8,7 @@ int main(int argc, char **argv) {
 
 
 void printMainMenu(){
-    printf("                                                                                        \n");
-    printf("                                                                                        \n");
+    system("clear");
     printf("╔══════════════════════════════════════════════════════════════════════════════════════╗\n");
     printf("║  ██████╗██████╗ ██╗   ██╗██████╗ ████████╗ ██████╗ ██████╗  █████╗ ██╗     ███████╗  ║\n");
     printf("║ ██╔════╝██╔══██╗╚██╗ ██╔╝██╔══██╗╚══██╔══╝██╔═══██╗██╔══██╗██╔══██╗██║     ██╔════╝  ║\n");
@@ -74,8 +73,7 @@ void mainMenu(){
 
 
 void printSetOneMenu(){
-    printf("                                                                                        \n");
-    printf("                                                                                        \n");
+    system("clear");
     printf("╔══════════════════════════════════════════════════════════════════════════════════════╗\n");
     printf("║ Set One: Basics                                                                      ║\n");
     printf("╠══════════════════════════════════════════════════════════════════════════════════════╣\n");
@@ -105,8 +103,7 @@ void printSetOneMenu(){
 
 
 void printSetOneChallengeOneMenu(){
-    printf("                                                                                                    \n");
-    printf("                                                                                                    \n");
+    system("clear");
     printf("╔══════════════════════════════════════════════════════════════════════════════════════════════════╗\n");
     printf("║ Set One: Basics                                             Challenge One: Convert hex to base64 ║\n");
     printf("╠══════════════════════════════════════════════════════════════════════════════════════════════════╣\n");
@@ -126,8 +123,7 @@ void printSetOneChallengeOneMenu(){
 
 
 void printSetOneChallengeTwoMenu(){
-    printf("                                                                                                    \n");
-    printf("                                                                                                    \n");
+    system("clear");
     printf("╔══════════════════════════════════════════════════════════════════════════════════════════════════╗\n");
     printf("║ Set One: Basics                                                         Challenge Two: Fixed XOR ║\n");
     printf("╠══════════════════════════════════════════════════════════════════════════════════════════════════╣\n");
@@ -151,8 +147,7 @@ void printSetOneChallengeTwoMenu(){
 
 
 void printSetOneChallengeThreeMenu(){
-    printf("                                                                                                    \n");
-    printf("                                                                                                    \n");
+    system("clear");
     printf("╔══════════════════════════════════════════════════════════════════════════════════════════════════╗\n");
     printf("║ Set One: Basics                                          Challenge Three: Single-byte XOR cipher ║\n");
     printf("╠══════════════════════════════════════════════════════════════════════════════════════════════════╣\n");
@@ -175,12 +170,7 @@ void printSetOneChallengeThreeMenu(){
 
 
 void printSetOneChallengeFourMenu(){
-
-
-
-
-    printf("                                                                                                    \n");
-    printf("                                                                                                    \n");
+    system("clear");
     printf("╔══════════════════════════════════════════════════════════════════════════════════════════════════╗\n");
     printf("║ Set One: Basics                                      Challenge Four: Detect single-character XOR ║\n");
     printf("╠══════════════════════════════════════════════════════════════════════════════════════════════════╣\n");
@@ -198,8 +188,7 @@ void printSetOneChallengeFourMenu(){
 
 
 void printSetOneChallengeFiveMenu(){
-    printf("                                                                                                    \n");
-    printf("                                                                                                    \n");
+    system("clear");
     printf("╔══════════════════════════════════════════════════════════════════════════════════════════════════╗\n");
     printf("║ Set One: Basics                                      Challenge Five: Implement repeating-key XOR ║\n");
     printf("╠══════════════════════════════════════════════════════════════════════════════════════════════════╣\n");
@@ -231,8 +220,7 @@ void printSetOneChallengeFiveMenu(){
 
 
 void printSetOneChallengeSixMenu(){
-    printf("                                                                                                    \n");
-    printf("                                                                                                    \n");
+    system("clear");
     printf("╔══════════════════════════════════════════════════════════════════════════════════════════════════╗\n");
     printf("║ Set One: Basics                                           Challenge Six: Break repeating-key XOR ║\n");
     printf("╠══════════════════════════════════════════════════════════════════════════════════════════════════╣\n");
@@ -274,8 +262,7 @@ void printSetOneChallengeSixMenu(){
 
 
 void printSetOneChallengeSevenMenu(){
-    printf("                                                                                                    \n");
-    printf("                                                                                                    \n");
+    system("clear");
     printf("╔══════════════════════════════════════════════════════════════════════════════════════════════════╗\n");
     printf("║ Set One: Basics                                                 Challenge Seven: AES in ECB mode ║\n");
     printf("╠══════════════════════════════════════════════════════════════════════════════════════════════════╣\n");
@@ -297,8 +284,7 @@ void printSetOneChallengeSevenMenu(){
 
 
 void printSetOneChallengeEightMenu(){
-    printf("                                                                                                    \n");
-    printf("                                                                                                    \n");
+    system("clear");
     printf("╔══════════════════════════════════════════════════════════════════════════════════════════════════╗\n");
     printf("║ Set One: Basics                                          Challenge Eight: Detect AES in ECB mode ║\n");
     printf("╠══════════════════════════════════════════════════════════════════════════════════════════════════╣\n");
@@ -317,8 +303,7 @@ void printSetOneChallengeEightMenu(){
 
 
 void printSetTwoMenu(){
-    printf("                                                                                        \n");
-    printf("                                                                                        \n");
+    system("clear");
     printf("╔══════════════════════════════════════════════════════════════════════════════════════╗\n");
     printf("║ Set Two: Block Crypto                                                                ║\n");
     printf("╠══════════════════════════════════════════════════════════════════════════════════════╣\n");
