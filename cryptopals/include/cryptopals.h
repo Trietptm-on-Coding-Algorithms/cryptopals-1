@@ -18,6 +18,16 @@ void setOneChallengeSix();
 void setOneChallengeSeven();
 void setOneChallengeEight();
 
+void printSetOneMenu();
+void printSetOneChallengeOneMenu();
+void printSetOneChallengeTwoMenu();
+void printSetOneChallengeThreeMenu();
+void printSetOneChallengeFourMenu();
+void printSetOneChallengeFiveMenu();
+void printSetOneChallengeSixMenu();
+void printSetOneChallengeSevenMenu();
+void printSetOneChallengeEightMenu();
+
 void setTwoMenu();
 void setTwoChallengeOne();
 void setTwoChallengeTwo();

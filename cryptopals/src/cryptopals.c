@@ -142,9 +142,33 @@ void printSetOneChallengeTwoMenu(){
     printf("║ ... should produce:                                                                              ║\n");
     printf("║ 746865206b696420646f6e277420706c6179                                                             ║\n");
     printf("╚══════════════════════════════════════════════════════════════════════════════════════════════════╝\n");
-    printf("[1] XOR input with key.                                                                             \n");
+    printf("[1] XOR inputs.                                                                                     \n");
     printf("[2] Change XOR input.                                                                               \n");
     printf("[3] Change XOR key.                                                                                 \n");
+    printf("[0] Main Menu                                                                                       \n");
+    printf("                                                                                                    \n");    
+}
+
+
+void printSetOneChallengeThreeMenu(){
+    printf("                                                                                                    \n");
+    printf("                                                                                                    \n");
+    printf("╔══════════════════════════════════════════════════════════════════════════════════════════════════╗\n");
+    printf("║ Set One: Basics                                          Challenge Three: Single-byte XOR cipher ║\n");
+    printf("╠══════════════════════════════════════════════════════════════════════════════════════════════════╣\n");
+    printf("║ The hex encoded string:                                                                          ║\n");
+    printf("║ 1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736                             ║\n");
+    printf("║                                                                                                  ║\n");
+    printf("║ ... has been XOR'd against a single character. Find the key, decrypt the message.                ║\n");
+    printf("║                                                                                                  ║\n");
+    printf("║ You can do this by hand. But don't: write code to do it for you.                                 ║\n");
+    printf("║                                                                                                  ║\n");
+    printf("║ How? Devise some method for \"scoring\" a piece of English plaintext.                              ║\n");
+    printf("║ Character frequency is a good metric.                                                            ║\n");
+    printf("║ Evaluate each output and choose the one with the best score.                                     ║\n");
+    printf("╚══════════════════════════════════════════════════════════════════════════════════════════════════╝\n");
+    printf("[1] Crack XOR cipher.                                                                               \n");
+    printf("[2] Change XOR ciphertext.                                                                          \n");
     printf("[0] Main Menu                                                                                       \n");
     printf("                                                                                                    \n");    
 }
@@ -371,7 +395,62 @@ void setOneChallengeTwo(){
 
 
 void setOneChallengeThree(){
+    xorDecryptedMessage *result;
+    int maxInputLength = 256;
 
+    char *challengeThreeInput = calloc(maxInputLength + 1, sizeof(char));
+    if(!challengeThreeInput){
+        printf("Failed to allocate memory for Set 1, Challenge 1.\n");
+        return;
+    }
+    strncpy(challengeThreeInput, SET_1_CHALLENGE_3_INPUT_1, strlen(SET_1_CHALLENGE_3_INPUT_1));
+
+    printSetOneChallengeThreeMenu();
+    char input = 0;
+    while (input != '0'){
+        while (input < '0' || input > '2'){
+            printf("Current Input: %s\n", challengeThreeInput);
+            printf("Enter Selection: ");
+            scanf("%c", &input);
+            while(input != '\n' && getchar() != '\n');
+        }
+
+        switch(input){
+            case '1':   result = solveSet1Challenge03(challengeThreeInput);
+                        if(result != NULL){
+                            printf("----------------------------------------------------\n");
+                            printf("Score:    %f\n", result->score);
+                            printf("Key:      %s\n", result->key);
+                            printf("Message:  %s\n\n", result->message);
+                            free(result->key);
+                            free(result->message);
+                            free(result);
+                        }
+                        printf("\n");
+                        input = 0;
+                        break;
+
+            case '2':   printf("Enter new input: ");
+                        fgets(challengeThreeInput, maxInputLength, stdin);
+                        char *ptr = challengeThreeInput;
+                        while(*ptr != '\0'){
+                            if(*ptr == '\n'){
+                                *ptr = '\0';
+                            } else {
+                                ptr++;
+                            }
+                        }
+                        printSetOneChallengeThreeMenu();
+                        input = 0;
+                        break;
+
+            case '0':   return;
+
+            default:    printf("Unknown option: %c\n", input);
+                        input = 0;
+                        break;
+        }        
+    }
 }
 
 
@@ -459,23 +538,6 @@ void setTwoMenu(){
 
 int oldMain(){
 
-
-    printf(" ------------------------ \n");
-    printf("| Set 01 :: Challenge 03 |\n");
-    printf(" ------------------------ \n");
-    xorDecryptedMessage *setOneChallengeThreeResult = solveSet1Challenge03(SET_1_CHALLENGE_3_INPUT_1);
-    if(setOneChallengeThreeResult){
-        printf("setOneChallengeResult Score:     %f\n", setOneChallengeThreeResult->score);
-        printf("Expected Key:                    %s\n", SET_1_CHALLENGE_3_EXPECTED_KEY);
-        printf("setOneChallengeResult Key:       %s\n", setOneChallengeThreeResult->key);
-        printf("Expected Message:                %s\n", SET_1_CHALLENGE_3_EXPECTED_MESSAGE);
-        printf("setOneChallengeResult Message:   %s\n\n", setOneChallengeThreeResult->message);
-        free(setOneChallengeThreeResult->key);
-        free(setOneChallengeThreeResult->message);
-        free(setOneChallengeThreeResult);
-    } else {
-        printf("Failed.\n\n");
-    }
 
     printf(" ------------------------ \n");
     printf("| Set 01 :: Challenge 04 |\n");
