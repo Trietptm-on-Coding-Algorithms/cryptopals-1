@@ -377,7 +377,7 @@ void checkAllKeyCombinations(xorDecryptedMessage* result, char *data, int number
 
     // If the key is less than keyLength, loop this index through all characters and recurse.
     } else {
-        for (char i=' '; i<='}'; i++){
+        for (int i=0x00; i<=0xFF; i++){
             keyBuffer[index] = i;
             checkAllKeyCombinations(result, data, numberOfBytes, keyLength, keyBuffer, index + 1);
         }
