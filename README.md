@@ -1,6 +1,6 @@
 # Matasano Crypto Challenges
+I decided to try my hand at completing Matasano's Crypto Challenges in C.
 
-I decided to try my hand at completing Matasano's Crypto Challenges in C. For more information about why I started, what the challenges are, or how you can try them for yourself, you can check my blog post [here](http://www.spdcx.net/2015/02/0x003-matasano-crypto-challenges-c.html). 
 
 This readme will keep you posted on my progress.
 
