@@ -7,7 +7,7 @@ CHALLENGE_NUMBER_KEY      = "challengeNum"
 CHALLENGE_DESCRIPTION_KEY = "challengeDescription"
 CHALLENGE_FUNCTION_KEY    = "challengeFunction"
 CHALLENGES_MAXIMUM_NUM    = 64
-CHALLENGES_COMPLETED_NUM  = 1
+CHALLENGES_COMPLETED_NUM  = 2
 
 # Initialize global variables
 challengeMap = {}
@@ -34,13 +34,56 @@ def challenge01():
   print "[+] HEX: {0}".format(hexString)
   print "[+] B64: {0}".format(b64String)
 
-# Populate challengeMap with details for challenge01
+
+def challenge02():
+  """
+    Challenge 02: "Fixed XOR"
+    
+    Write a function that takes two equal-length buffers and produces their XOR 
+    combination.
+    
+    If your function works properly, then when you feed it the string:
+      1c0111001f010100061a024b53535009181c
+    After hex decoding, and when XOR'd against:
+      686974207468652062756c6c277320657965
+    Should produce:
+      746865206b696420646f6e277420706c6179
+  """
+  hexInput01 = None
+  hexInput02 = None
+  try:
+    hexInput01 = getSysArg(2)
+    hexInput02 = getSysArg(3)
+    if not isHex(hexInput01):
+      raise Exception("input 1 is not valid hex.")
+    if not isHex(hexInput02):
+      raise Exception("input 2 is not valid hex.")
+    if len(hexInput01) is not len(hexInput02):
+      raise Exception("input 1 is not the same length as input 2")
+  except Exception as e:
+    raise Exception(str(e))
+
+  hexOutput = "%x" % (int(hexInput01, 16) ^ int(hexInput02, 16))
+  print "[+] INPUT1:  {0}".format(hexInput01)
+  print "[+] INPUT2:  {0}".format(hexInput02)
+  print "[+] OUTPUT:  {0}".format(hexOutput)
+
+
+# Populate challengeMap with details for challenges
 challenge01Map = {
   CHALLENGE_NUMBER_KEY      : 1, 
   CHALLENGE_DESCRIPTION_KEY : "Convert hex to base64",
   CHALLENGE_FUNCTION_KEY    : challenge01
 }
+
+challenge02Map = {
+  CHALLENGE_NUMBER_KEY      : 2,
+  CHALLENGE_DESCRIPTION_KEY : "Fixed XOR",
+  CHALLENGE_FUNCTION_KEY    : challenge02
+}
+
 challengeMap[1] = challenge01Map
+challengeMap[2] = challenge02Map
 
 
 def hexToBase64(hexString):
